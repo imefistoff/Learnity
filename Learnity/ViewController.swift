@@ -19,7 +19,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // Set the view's delegate
     leftScene.delegate = self
-    
+    rightScene.delegate = self
     // Show statistics such as fps and timing information
     leftScene.showsStatistics = true
     rightScene.showsStatistics = true
@@ -28,10 +28,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // Set the scene to the view
     leftScene.scene = scene
-    rightScene.scene = scene
-    
-    //getupdate
     leftScene.isPlaying = true
+    
+    rightScene.scene = scene
     rightScene.isPlaying = true
   }
   
@@ -40,9 +39,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // Create a session configuration
     let configuration = ARWorldTrackingConfiguration()
+    configuration.frameSemantics.insert(.personSegmentationWithDepth)
+    configuration.planeDetection = [.horizontal, .vertical]
     
     // Run the view's session
     leftScene.session.run(configuration)
+    rightScene.session = leftScene.session
   }
   
   override func viewWillDisappear(_ animated: Bool) {
@@ -61,21 +63,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   func updateFrame() {
     
     // Clone pointOfView for Second View
-    let pointOfView : SCNNode = (leftScene.pointOfView?.clone())!
-    
-    // Determine Adjusted Position for Right Eye
-    let orientation : SCNQuaternion = pointOfView.orientation
-    let orientationQuaternion : GLKQuaternion = GLKQuaternionMake(orientation.x, orientation.y, orientation.z, orientation.w)
-    let eyePos : GLKVector3 = GLKVector3Make(1.0, 0.0, 0.0)
-    let rotatedEyePos : GLKVector3 = GLKQuaternionRotateVector3(orientationQuaternion, eyePos)
-    let rotatedEyePosSCNV : SCNVector3 = SCNVector3Make(rotatedEyePos.x, rotatedEyePos.y, rotatedEyePos.z)
-    
-    let mag : Float = 0.066 // This is the value for the distance between two pupils (in metres). The Interpupilary Distance (IPD).
-    pointOfView.position.x += rotatedEyePosSCNV.x * mag
-    pointOfView.position.y += rotatedEyePosSCNV.y * mag
-    pointOfView.position.z += rotatedEyePosSCNV.z * mag
-    
-    rightScene.pointOfView = pointOfView
+//    let pointOfView : SCNNode = (leftScene.pointOfView?.clone())!
+//
+//    // Determine Adjusted Position for Right Eye
+//    let orientation : SCNQuaternion = pointOfView.orientation
+//    let orientationQuaternion : GLKQuaternion = GLKQuaternionMake(orientation.x, orientation.y, orientation.z, orientation.w)
+//    let eyePos : GLKVector3 = GLKVector3Make(1.0, 0.0, 0.0)
+//    let rotatedEyePos : GLKVector3 = GLKQuaternionRotateVector3(orientationQuaternion, eyePos)
+//    let rotatedEyePosSCNV : SCNVector3 = SCNVector3Make(rotatedEyePos.x, rotatedEyePos.y, rotatedEyePos.z)
+//
+//    let mag : Float = 0.066 // This is the value for the distance between two pupils (in metres). The Interpupilary Distance (IPD).
+//    pointOfView.position.x += rotatedEyePosSCNV.x * mag
+//    pointOfView.position.y += rotatedEyePosSCNV.y * mag
+//    pointOfView.position.z += rotatedEyePosSCNV.z * mag
+//
+//    rightScene.pointOfView = pointOfView
     
   }
   
