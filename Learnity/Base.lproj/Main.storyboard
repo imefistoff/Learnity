@@ -16,22 +16,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d5j-kR-3VW">
-                                <rect key="frame" x="403" y="0.0" width="493" height="414"/>
-                            </arscnView>
-                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PeG-WX-gXx">
-                                <rect key="frame" x="0.0" y="0.0" width="448" height="414"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YLC-rd-Izq">
+                                <rect key="frame" x="448" y="0.0" width="448" height="414"/>
                                 <subviews>
-                                    <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9by-xg-zBI">
-                                        <rect key="frame" x="0.0" y="0.0" width="488" height="414"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jes-be-0hF">
+                                        <rect key="frame" x="203" y="12" width="42" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d5j-kR-3VW">
+                                        <rect key="frame" x="0.0" y="0.0" width="448" height="414"/>
                                     </arscnView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="9by-xg-zBI" secondAttribute="bottom" id="HPM-MW-CWE"/>
-                                    <constraint firstItem="9by-xg-zBI" firstAttribute="leading" secondItem="PeG-WX-gXx" secondAttribute="leading" id="KCq-cl-vrX"/>
-                                    <constraint firstAttribute="trailing" secondItem="9by-xg-zBI" secondAttribute="trailing" constant="-40" id="M9l-8w-fup"/>
-                                    <constraint firstItem="9by-xg-zBI" firstAttribute="top" secondItem="PeG-WX-gXx" secondAttribute="top" id="SGU-9E-Jk9"/>
+                                    <constraint firstItem="d5j-kR-3VW" firstAttribute="leading" secondItem="YLC-rd-Izq" secondAttribute="leading" id="Aqp-He-7aw"/>
+                                    <constraint firstItem="jes-be-0hF" firstAttribute="centerX" secondItem="YLC-rd-Izq" secondAttribute="centerX" id="T3z-Tc-YOx"/>
+                                    <constraint firstItem="jes-be-0hF" firstAttribute="top" secondItem="YLC-rd-Izq" secondAttribute="top" constant="12" id="XLi-C9-gAo"/>
+                                    <constraint firstAttribute="bottom" secondItem="d5j-kR-3VW" secondAttribute="bottom" id="aGg-aq-kdm"/>
+                                    <constraint firstItem="d5j-kR-3VW" firstAttribute="top" secondItem="YLC-rd-Izq" secondAttribute="top" id="nZZ-Fz-bYx"/>
+                                    <constraint firstAttribute="trailing" secondItem="d5j-kR-3VW" secondAttribute="trailing" id="sjY-W9-TbW"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Soe-Ky-hxZ">
@@ -131,21 +136,44 @@
                                     <constraint firstAttribute="trailing" secondItem="g4d-Ps-3uF" secondAttribute="trailing" constant="163" id="ck9-Ya-LOL"/>
                                 </constraints>
                             </view>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PeG-WX-gXx">
+                                <rect key="frame" x="0.0" y="0.0" width="448" height="414"/>
+                                <subviews>
+                                    <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9by-xg-zBI">
+                                        <rect key="frame" x="0.0" y="0.0" width="488" height="414"/>
+                                    </arscnView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgV-QS-n4l">
+                                        <rect key="frame" x="203" y="12" width="42" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="HgV-QS-n4l" firstAttribute="centerX" secondItem="PeG-WX-gXx" secondAttribute="centerX" id="6H4-B0-qIm"/>
+                                    <constraint firstAttribute="bottom" secondItem="9by-xg-zBI" secondAttribute="bottom" id="HPM-MW-CWE"/>
+                                    <constraint firstItem="9by-xg-zBI" firstAttribute="leading" secondItem="PeG-WX-gXx" secondAttribute="leading" id="KCq-cl-vrX"/>
+                                    <constraint firstAttribute="trailing" secondItem="9by-xg-zBI" secondAttribute="trailing" constant="-40" id="M9l-8w-fup"/>
+                                    <constraint firstItem="9by-xg-zBI" firstAttribute="top" secondItem="PeG-WX-gXx" secondAttribute="top" id="SGU-9E-Jk9"/>
+                                    <constraint firstItem="HgV-QS-n4l" firstAttribute="top" secondItem="PeG-WX-gXx" secondAttribute="top" constant="12" id="pFF-4O-QWS"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="Soe-Ky-hxZ" secondAttribute="bottom" id="A4T-aW-fby"/>
-                            <constraint firstAttribute="trailing" secondItem="d5j-kR-3VW" secondAttribute="trailing" id="EVr-6j-rts"/>
-                            <constraint firstItem="d5j-kR-3VW" firstAttribute="width" secondItem="U0K-SW-4ec" secondAttribute="width" multiplier="0.55" id="FTr-ku-ccs"/>
+                            <constraint firstAttribute="trailing" secondItem="YLC-rd-Izq" secondAttribute="trailing" id="EBk-qR-K0F"/>
                             <constraint firstItem="PeG-WX-gXx" firstAttribute="height" secondItem="U0K-SW-4ec" secondAttribute="height" id="PD5-xL-0xC"/>
                             <constraint firstItem="PeG-WX-gXx" firstAttribute="leading" secondItem="U0K-SW-4ec" secondAttribute="leading" id="QVS-cE-lVv"/>
                             <constraint firstAttribute="trailing" secondItem="Soe-Ky-hxZ" secondAttribute="trailing" id="RW9-MZ-IUa"/>
+                            <constraint firstAttribute="bottom" secondItem="YLC-rd-Izq" secondAttribute="bottom" id="THW-zJ-BjX"/>
                             <constraint firstItem="PeG-WX-gXx" firstAttribute="width" secondItem="U0K-SW-4ec" secondAttribute="width" multiplier="0.5" id="WeI-J9-WMP"/>
                             <constraint firstItem="Soe-Ky-hxZ" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" id="hUF-aE-3dW"/>
-                            <constraint firstItem="d5j-kR-3VW" firstAttribute="bottom" secondItem="PeG-WX-gXx" secondAttribute="bottom" id="ho4-ZJ-bQM"/>
-                            <constraint firstItem="d5j-kR-3VW" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" id="pK8-hU-TAn"/>
+                            <constraint firstItem="YLC-rd-Izq" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="jA7-q8-EAu"/>
                             <constraint firstItem="PeG-WX-gXx" firstAttribute="centerY" secondItem="U0K-SW-4ec" secondAttribute="centerY" id="pxO-BU-MvE"/>
+                            <constraint firstItem="YLC-rd-Izq" firstAttribute="leading" secondItem="PeG-WX-gXx" secondAttribute="trailing" id="qp7-kU-VYL"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -155,6 +183,9 @@
                     </view>
                     <connections>
                         <outlet property="debugView" destination="Soe-Ky-hxZ" id="FMe-ld-IpQ"/>
+                        <outlet property="leftSceneContainer" destination="PeG-WX-gXx" id="UUV-ew-vla"/>
+                        <outlet property="predictionLabel" destination="jes-be-0hF" id="JxW-5P-2Oc"/>
+                        <outlet property="predictionLabel2" destination="HgV-QS-n4l" id="jvN-6d-hGu"/>
                         <outlet property="sceneViewLeft" destination="9by-xg-zBI" id="hRr-40-mDa"/>
                         <outlet property="sceneViewRight" destination="d5j-kR-3VW" id="Vgb-ES-Jy8"/>
                         <outlet property="segmentedControl" destination="crI-Ul-E5D" id="Bzb-ST-r3o"/>

@@ -16,3 +16,9 @@ enum GeometricTransformationTypes: Int {
 enum Axes {
   case x, y, z
 }
+
+enum MovingState: String {
+  case up
+  case down
+  case nothing
+}

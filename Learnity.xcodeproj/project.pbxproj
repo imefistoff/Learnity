@@ -13,6 +13,10 @@
 		AE00737C27272EBE00CC11C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737A27272EBE00CC11C2 /* Main.storyboard */; };
 		AE00737E27272EBF00CC11C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE00737D27272EBF00CC11C2 /* Assets.xcassets */; };
 		AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */; };
+		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
+		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
+		AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */; };
+		AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = AED058862745400100AB4D9E /* SimpleParticle.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +27,10 @@
 		AE00737B27272EBE00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AE00737D27272EBF00CC11C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE00738027272EBF00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = oneClassifier.mlpackage; sourceTree = "<group>"; };
+		AED058862745400100AB4D9E /* SimpleParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SimpleParticle.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,14 +63,26 @@
 		AE00737327272EBE00CC11C2 /* Learnity */ = {
 			isa = PBXGroup;
 			children = (
+				AED0588127450BDE00AB4D9E /* ML */,
 				AE00737427272EBE00CC11C2 /* AppDelegate.swift */,
 				AE00737627272EBE00CC11C2 /* art.scnassets */,
 				AE00737827272EBE00CC11C2 /* ViewController.swift */,
 				AE00737A27272EBE00CC11C2 /* Main.storyboard */,
 				AE00737D27272EBF00CC11C2 /* Assets.xcassets */,
 				AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */,
+				AEA6B124274287700002FC20 /* Extensions.swift */,
+				AEA6B126274287B20002FC20 /* Enums.swift */,
+				AED058862745400100AB4D9E /* SimpleParticle.sks */,
 			);
 			path = Learnity;
+			sourceTree = "<group>";
+		};
+		AED0588127450BDE00AB4D9E /* ML */ = {
+			isa = PBXGroup;
+			children = (
+				AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */,
+			);
+			path = ML;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,6 +147,7 @@
 				AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */,
 				AE00737E27272EBF00CC11C2 /* Assets.xcassets in Resources */,
 				AE00737C27272EBE00CC11C2 /* Main.storyboard in Resources */,
+				AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,7 +159,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE00737927272EBE00CC11C2 /* ViewController.swift in Sources */,
+				AEA6B125274287700002FC20 /* Extensions.swift in Sources */,
+				AEA6B127274287B20002FC20 /* Enums.swift in Sources */,
 				AE00737527272EBE00CC11C2 /* AppDelegate.swift in Sources */,
+				AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
