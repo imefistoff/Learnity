@@ -19,15 +19,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   @IBOutlet weak var predictionLabel: UILabel!
   @IBOutlet weak var predictionLabel2: UILabel!
   
-  private var overlayLayer = CAShapeLayer()
-  private var pointsPath = UIBezierPath()
-  
-  
-  let scene = SCNScene(named: "art.scnassets/ship.scn")!
-  var avion : SCNNode?
-  var earth : SCNNode?
-  
-  let interpupilaryDistance : Float = 0.066 // This is the value for the distance between two pupils (in metres). The Interpupilary Distance (IPD).
+  var currentObjects = [SCNNode]()
+  var initialObjectsClones = [SCNNode]()
+  var indexFocusedObject = -1
   
   //MARK: Prediction variables
   let predictEvery = 3
@@ -43,37 +37,44 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   var movingTreshold = CGFloat(50)
   
+  
+  //MARK: Scenes
+  let shipScene = SCNScene(named: "art.scnassets/ship.scn")!
+  let earthScene = SCNScene(named: "art.scnassets/earth.scn")!
+  let geometryScene = SCNScene(named: "art.scnassets/geometry.scn")!
+  var scenes = [SCNScene]()
+  var indexCurrentScene = 0
+  
   //MARK:  DEBUG MODE VARIABLES
   @IBOutlet weak var leftSceneContainer: UIView!
   @IBOutlet weak var segmentedControl: UISegmentedControl!
   @IBOutlet weak var xSwitch: UISwitch!
   @IBOutlet weak var ySwitch: UISwitch!
   @IBOutlet weak var zSwitch: UISwitch!
-  let isDebug = false
+  let isDebug = true
   var selectedTransformationType = GeometricTransformationTypes.translation
+  
   
   
   override func viewDidLoad() {
     super.viewDidLoad()
     self.debugView.isHidden = !isDebug
     
+    scenes = [geometryScene, earthScene, shipScene]
+    
     UIApplication.shared.isIdleTimerDisabled = true
     
-    // Create a new scene
-    let scene = SCNScene(named: "art.scnassets/ship.scn")!
     sceneViewLeft.delegate = self
     sceneViewLeft.session.delegate = self
-    sceneViewLeft.scene = scene
     sceneViewLeft.isPlaying = true
-    
-    sceneViewRight.scene = scene
     sceneViewRight.isPlaying = true
     
-    avion = scene.rootNode.childNode(withName: "ship", recursively: false)
-    avion?.centerPivot()
-    avion?.position = SCNVector3(0,0,-1.5)
+    let mainScene = SCNScene(named: "art.scnassets/main.scn")!
+    sceneViewLeft.scene = mainScene
+    sceneViewRight.scene = mainScene
     
-    earth = scene.rootNode.childNode(withName: "earth", recursively: false)
+    collectAllObjects(from: getNextScene())
+    insertNewObjectsIntoScene()
     
     if let camera = sceneViewLeft.pointOfView?.camera {
       camera.fieldOfView = CGFloat(138)
@@ -82,9 +83,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    
-    ///add view for drawing
-    addDrawingView()
     
     /// Create a session configuration
     let configuration = ARWorldTrackingConfiguration()
@@ -100,6 +98,47 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Pause the view's session
     sceneViewLeft.session.pause()
+  }
+  
+  @IBAction func saveChangesForCurrentObject(_ sender: Any) {
+    if indexFocusedObject != -1
+    {
+      initialObjectsClones[indexFocusedObject]  =  currentObjects[indexFocusedObject].clone()
+    }
+  }
+  
+  @IBAction func discardChangesForCurrentObject(_ sender: Any) {
+    if indexFocusedObject != -1
+    {
+      let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
+      currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
+      moveObjectInFrontOfCamera()
+    }
+  }
+  
+  @IBAction func loadNextScene(_ sender: Any) {
+    indexCurrentScene += 1
+    resetSceneInitialData()
+    removeOldObjectsFromScene()
+    let nextScene = getNextScene()
+    collectAllObjects(from: nextScene)
+    insertNewObjectsIntoScene()
+  }
+  
+  @IBAction func focusNextObject(_ sender: Any) {
+    let prevIndexFocusedObject = indexFocusedObject
+    if indexFocusedObject < 0 || indexFocusedObject >= currentObjects.count - 1 {
+      indexFocusedObject = 0
+    } else {
+      indexFocusedObject += 1
+    }
+    
+    //return object to its initial position
+    if prevIndexFocusedObject != -1 {
+      translateAndRotateObjectAction(startObject: currentObjects[prevIndexFocusedObject], finalObject: initialObjectsClones[prevIndexFocusedObject], isReturningToInitialPosition: true)
+    }
+    
+    moveObjectInFrontOfCamera()
   }
   
   @IBAction func selectedTypeChanged(_ sender: UISegmentedControl) {
@@ -122,54 +161,92 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
   }
   
-  func rotate(_ step: CGFloat){
-    guard let avion = avion else {
-      return
+  func insertNewObjectsIntoScene(){
+    for object in currentObjects {
+      sceneViewLeft.scene.rootNode.addChildNode(object)
     }
+  }
+  
+  func removeOldObjectsFromScene(){
+    for object in sceneViewLeft.scene.rootNode.childNodes {
+      object.removeFromParentNode()
+    }
+  }
+  
+  func getNextScene() -> SCNScene {
+    if indexCurrentScene > scenes.count - 1 {
+      indexCurrentScene = 0
+    }
+    return scenes[indexCurrentScene]
+  }
+  
+  func resetSceneInitialData() {
+    indexFocusedObject = -1
+    currentObjects.removeAll()
+    initialObjectsClones.removeAll()
+  }
+  
+  func collectAllObjects(from scene: SCNScene) {
+    for object in scene.rootNode.childNodes {
+      if object.name != nil {
+        object.centerPivot()
+        currentObjects.append(object.clone())
+        initialObjectsClones.append(object.clone())
+      }
+    }
+  }
+  
+  func moveObjectInFrontOfCamera() {
+    if let pov = sceneViewLeft.pointOfView {
+      let nextObjectToFocus = currentObjects[indexFocusedObject]
+      translateAndRotateObjectAction(startObject: nextObjectToFocus, finalObject: pov, isReturningToInitialPosition: false)
+    }
+  }
+  
+  func translateAndRotateObjectAction(startObject: SCNNode, finalObject: SCNNode, isReturningToInitialPosition: Bool) {
+    //calculate final rotation
+    let finalObjRotation = finalObject.rotation
+    let rotateAction = SCNAction.rotate(toAxisAngle: finalObjRotation,
+                                        duration: 1)
     
-    let rotateAction = SCNAction.rotate(by: step,
-                                        around: SCNVector3(xSwitch.isOn ? 1 : 0,
-                                                           ySwitch.isOn ? 1 : 0,
-                                                           zSwitch.isOn ? 1 : 0),
-                                        duration: 0.3)
-    avion.runAction(rotateAction)
+    //calculate final position
+    let finalObjTransform = finalObject.transform
+    let finalObjOrientation = SCNVector3(-finalObjTransform.m31, -finalObjTransform.m32, -finalObjTransform.m33)
+    let finalObjLocation = SCNVector3(finalObjTransform.m41, finalObjTransform.m42, finalObjTransform.m43)
+    let finalObjPosition = (finalObjOrientation * (isReturningToInitialPosition ? 0 : 2)) + finalObjLocation
+    
+    let translateAction = SCNAction.move(to: finalObjPosition, duration: 2)
+    
+    let focusAction = SCNAction.group([rotateAction, translateAction])
+    startObject.runAction(focusAction)
+  }
+  
+  func rotate(_ step: CGFloat){
+    if indexFocusedObject != -1 {
+      let rotateAction = SCNAction.rotate(by: step,
+                                          around: SCNVector3(xSwitch.isOn ? 1 : 0,
+                                                             ySwitch.isOn ? 1 : 0,
+                                                             zSwitch.isOn ? 1 : 0),
+                                          duration: 0.3)
+      currentObjects[indexFocusedObject].runAction(rotateAction)
+    }
   }
   
   func scale(_ step: CGFloat){
-    guard let avion = avion else {
-      return
+    if indexFocusedObject != -1 {
+      let scaleAction = SCNAction.scale(by: step, duration: 2)
+      currentObjects[indexFocusedObject].runAction(scaleAction)
     }
-    
-    let scaleAction = SCNAction.scale(by: step, duration: 2)
-    avion.runAction(scaleAction)
   }
   
   func translate(_ step: Float) {
-    guard let avion = avion else {
-      return
+    if indexFocusedObject != -1 {
+      let translateAction = SCNAction.move(by: SCNVector3(xSwitch.isOn ? step: 0,
+                                                          ySwitch.isOn ? step : 0,
+                                                          zSwitch.isOn ? step : 0), duration: 2)
+      currentObjects[indexFocusedObject].runAction(translateAction)
     }
-    
-    let translateAction = SCNAction.move(by: SCNVector3(xSwitch.isOn ? step: 0,
-                                                        ySwitch.isOn ? step : 0,
-                                                        zSwitch.isOn ? step : 0), duration: 2)
-    avion.runAction(translateAction)
   }
-  
-  func addDrawingView() {
-    ///Use this view for drawing something for debuging (black dot on finger TIP foe example).
-    let drawingViewLeft = UIView()
-    drawingViewLeft.backgroundColor = .clear
-    drawingViewLeft.translatesAutoresizingMaskIntoConstraints = false
-    
-    leftSceneContainer.addSubview(drawingViewLeft)
-    
-    drawingViewLeft.center = leftSceneContainer.center
-    leftSceneContainer.addConstraint(NSLayoutConstraint(item: drawingViewLeft, attribute: .height, relatedBy: .equal, toItem: leftSceneContainer, attribute: .height, multiplier: 1, constant: 0))
-    leftSceneContainer.addConstraint(NSLayoutConstraint(item: drawingViewLeft, attribute: .width, relatedBy: .equal, toItem: leftSceneContainer, attribute: .width, multiplier: 1, constant: 0))
-    
-    drawingViewLeft.layer.addSublayer(overlayLayer)
-  }
-  
   
   func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
     DispatchQueue.main.async {
@@ -218,9 +295,9 @@ extension ViewController: ARSessionDelegate{
     }
     let handObservation = handPoses.first
     if frameCounter % predictEvery == 0 {
-      let model = oneClassifier()
       guard let keypointsMultiArray = try? handObservation?.keypointsMultiArray() else { fatalError()}
       do {
+        let model = try oneClassifier(configuration: MLModelConfiguration())
         let handPosePrediction = try model.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
         if confidence > 0.5 {
@@ -239,7 +316,7 @@ extension ViewController: ARSessionDelegate{
     guard let handObservation = handObservation else {
       return
     }
-
+    
     if frameCounter % predictGestureMovingEvery == 0 {
       let landmarkConfidenceTreshold : Float = 0.2
       let indexFingerName = VNHumanHandPoseObservation.JointName.indexTip
@@ -252,27 +329,22 @@ extension ViewController: ARSessionDelegate{
       if let indexFingerPoint = try? handObservation.recognizedPoint(indexFingerName),
          indexFingerPoint.confidence > landmarkConfidenceTreshold {
         let normalizedLocation = indexFingerPoint.location
-        ///locatia FingerTip in imaginea noastra (0.55 din latimea screem) coordonate corecte!!!
         indexFingerTipLocation = CGPoint(x: normalizedLocation.x * width, y: normalizedLocation.y * height)
         
         if isPreviousFingerTipPositionNotSet() {
           previousFingerTipPosition = indexFingerTipLocation!
-        }else{
+        } else {
           let delta = previousFingerTipPosition.y - indexFingerTipLocation!.y
           if abs(delta) >= movingTreshold{
             movingState = delta > 0 ? .up : .down
             previousFingerTipPosition = indexFingerTipLocation!
-          }else{
+          } else {
             movingState = .nothing
           }
         }
-        ///uncomment to draw point for finger tip
-        ///showPoints(indexFingerTipLocation!, color: .red)
       } else {
         indexFingerTipLocation = nil
         previousFingerTipPosition = CGPoint(x: -1, y: -1)
-        ///uncomment to remove point for finger when not found
-        ///showPoints(CGPoint(x:0, y:0), color: .clear)
       }
     }
   }
@@ -288,16 +360,10 @@ extension ViewController: ARSessionDelegate{
     case .down:
       rotate(-0.25)
     case .nothing:
-      avion?.removeAllActions()
+      if !currentObjects.isEmpty && indexFocusedObject >= 0 {
+        currentObjects[indexFocusedObject].removeAllActions()
+      }
     }
-  }
-  
-  func showPoints(_ point: CGPoint, color: UIColor) {
-    ///render on sublayer dot for Index finger TIP
-    overlayLayer.sublayers?.removeAll()
-    let circleLayer = CAShapeLayer();
-    circleLayer.path = UIBezierPath(ovalIn: CGRect(x: point.x, y: point.y, width: 15, height: 15)).cgPath;
-    overlayLayer.addSublayer(circleLayer)
   }
   
   func updatePredictionLabels(with message: String){

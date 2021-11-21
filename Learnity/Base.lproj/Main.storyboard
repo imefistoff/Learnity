@@ -20,7 +20,7 @@
                                 <rect key="frame" x="448" y="0.0" width="448" height="414"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jes-be-0hF">
-                                        <rect key="frame" x="203" y="12" width="42" height="20.5"/>
+                                        <rect key="frame" x="203.5" y="12" width="41.5" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -128,12 +128,78 @@
                                             </button>
                                         </subviews>
                                     </stackView>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Idq-rA-De1">
+                                        <rect key="frame" x="102" y="206" width="97" height="38"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="1" green="0.88963988989999998" blue="0.8747594622" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain">
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="Save">
+                                                    <attributes>
+                                                        <font key="NSFont" size="16" name="Helvetica"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="saveChangesForCurrentObject:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Myc-YK-1T1"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O2r-pl-QDB">
+                                        <rect key="frame" x="259" y="208" width="97" height="38"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="1" green="0.88963988989999998" blue="0.8747594622" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain">
+                                            <attributedString key="attributedTitle">
+                                                <fragment content="Discard">
+                                                    <attributes>
+                                                        <font key="NSFont" size="16" name="Helvetica"/>
+                                                        <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    </attributes>
+                                                </fragment>
+                                            </attributedString>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="discardChangesForCurrentObject:" destination="BV1-FR-VrT" eventType="touchUpInside" id="JRa-tN-QBV"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aDQ-3v-Kmq">
+                                        <rect key="frame" x="12" y="372" width="133.5" height="30"/>
+                                        <color key="backgroundColor" red="1" green="0.88963988989999998" blue="0.8747594622" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="lzC-zd-G4V"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Show next scene"/>
+                                        <connections>
+                                            <action selector="loadNextScene:" destination="BV1-FR-VrT" eventType="touchUpInside" id="YUg-cI-AE4"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rGe-G1-sBn">
+                                        <rect key="frame" x="321" y="372" width="115" height="30"/>
+                                        <color key="backgroundColor" red="1" green="0.88963988994444843" blue="0.87475946217349843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="4if-p8-MWh"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Show next obj"/>
+                                        <connections>
+                                            <action selector="focusNextObject:" destination="BV1-FR-VrT" eventType="touchUpInside" id="jum-7U-bJy"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="rGe-G1-sBn" secondAttribute="bottom" constant="12" id="1aL-ya-4OP"/>
                                     <constraint firstAttribute="bottom" secondItem="g4d-Ps-3uF" secondAttribute="bottom" constant="21" id="1oF-TI-LnN"/>
+                                    <constraint firstItem="aDQ-3v-Kmq" firstAttribute="leading" secondItem="Soe-Ky-hxZ" secondAttribute="leading" constant="12" id="FP6-I2-U6h"/>
+                                    <constraint firstAttribute="trailing" secondItem="rGe-G1-sBn" secondAttribute="trailing" constant="12" id="Ixb-0i-bf2"/>
                                     <constraint firstItem="g4d-Ps-3uF" firstAttribute="leading" secondItem="Soe-Ky-hxZ" secondAttribute="leading" constant="163" id="PXm-cV-1Tw"/>
                                     <constraint firstAttribute="trailing" secondItem="g4d-Ps-3uF" secondAttribute="trailing" constant="163" id="ck9-Ya-LOL"/>
+                                    <constraint firstAttribute="bottom" secondItem="aDQ-3v-Kmq" secondAttribute="bottom" constant="12" id="jkU-1K-5EC"/>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PeG-WX-gXx">
@@ -143,7 +209,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="488" height="414"/>
                                     </arscnView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgV-QS-n4l">
-                                        <rect key="frame" x="203" y="12" width="42" height="20.5"/>
+                                        <rect key="frame" x="203.5" y="12" width="41.5" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -175,11 +241,6 @@
                             <constraint firstItem="PeG-WX-gXx" firstAttribute="centerY" secondItem="U0K-SW-4ec" secondAttribute="centerY" id="pxO-BU-MvE"/>
                             <constraint firstItem="YLC-rd-Izq" firstAttribute="leading" secondItem="PeG-WX-gXx" secondAttribute="trailing" id="qp7-kU-VYL"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="Soe-Ky-hxZ"/>
-                            </mask>
-                        </variation>
                     </view>
                     <connections>
                         <outlet property="debugView" destination="Soe-Ky-hxZ" id="FMe-ld-IpQ"/>
