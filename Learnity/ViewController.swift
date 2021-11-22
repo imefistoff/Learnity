@@ -135,6 +135,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     //return object to its initial position
     if prevIndexFocusedObject != -1 {
+      let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
+      currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
       translateAndRotateObjectAction(startObject: currentObjects[prevIndexFocusedObject], finalObject: initialObjectsClones[prevIndexFocusedObject], isReturningToInitialPosition: true)
     }
     
