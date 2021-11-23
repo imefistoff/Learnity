@@ -24,6 +24,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var indexFocusedObject = -1
   
   //MARK: Prediction variables
+  var model : Pose6AndBackground!
   let predictEvery = 3
   var frameCounter = -1
   
@@ -36,6 +37,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
   }
   var movingTreshold = CGFloat(50)
+  
+  //MARK: Logic management
+  let gestureManager = ControlManager.shared
   
   
   //MARK: Scenes
@@ -58,6 +62,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    do {
+      model = try Pose6AndBackground(configuration: MLModelConfiguration())
+    } catch {
+      fatalError("Cannot get CoreML model for gesture. Investigate please.")
+    }
+    
     self.debugView.isHidden = !isDebug
     
     scenes = [geometryScene, earthScene, shipScene]
@@ -293,24 +304,28 @@ extension ViewController: ARSessionDelegate{
     }
     
     guard let handPoses = handPoseReques.results, !handPoses.isEmpty else {
+      //Aici intra cand nu este mana in cadru
       return
     }
     let handObservation = handPoses.first
     if frameCounter % predictEvery == 0 {
       guard let keypointsMultiArray = try? handObservation?.keypointsMultiArray() else { fatalError()}
       do {
-        let model = try oneClassifier(configuration: MLModelConfiguration())
         let handPosePrediction = try model.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
         if confidence > 0.5 {
           updatePredictionLabels(with: "\(handPosePrediction.label) \(confidence)")
+          gestureManager.setGestureType(handPosePrediction.label)
+        } else {
+          // TODO: check if we actually need this state update
+          gestureManager.setGestureType(GestureType.nothing.rawValue)
         }
       }catch{
         print("Prediction error: \(error)")
       }
       
       ///monitoring Finger Index TIP position on screen (up/down only)
-      checkMoving(handObservation)
+      //checkMoving(handObservation)
     }
   }
   

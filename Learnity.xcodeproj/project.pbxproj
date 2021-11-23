@@ -15,6 +15,8 @@
 		AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */; };
 		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
+		AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */; };
+		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
 		AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */; };
 		AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = AED058862745400100AB4D9E /* SimpleParticle.sks */; };
 /* End PBXBuildFile section */
@@ -29,6 +31,8 @@
 		AE00738027272EBF00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Pose6AndBackground.mlmodel; sourceTree = "<group>"; };
+		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
 		AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = oneClassifier.mlpackage; sourceTree = "<group>"; };
 		AED058862745400100AB4D9E /* SimpleParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SimpleParticle.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +77,7 @@
 				AEA6B124274287700002FC20 /* Extensions.swift */,
 				AEA6B126274287B20002FC20 /* Enums.swift */,
 				AED058862745400100AB4D9E /* SimpleParticle.sks */,
+				AECC15ED274CD8B900B23895 /* ControlManager.swift */,
 			);
 			path = Learnity;
 			sourceTree = "<group>";
@@ -80,6 +85,7 @@
 		AED0588127450BDE00AB4D9E /* ML */ = {
 			isa = PBXGroup;
 			children = (
+				AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */,
 				AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */,
 			);
 			path = ML;
@@ -162,6 +168,8 @@
 				AEA6B125274287700002FC20 /* Extensions.swift in Sources */,
 				AEA6B127274287B20002FC20 /* Enums.swift in Sources */,
 				AE00737527272EBE00CC11C2 /* AppDelegate.swift in Sources */,
+				AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */,
+				AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */,
 				AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,14 +328,14 @@
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeLeft;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationLandscapeRight;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationLandscapeRight;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mefist.personal.Learnity;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mefist.personal.Learnity-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -351,14 +359,14 @@
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = arkit;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationLandscapeLeft;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationLandscapeRight;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationLandscapeRight;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mefist.personal.Learnity;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.mefist.personal.Learnity-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
