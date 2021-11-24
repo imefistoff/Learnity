@@ -29,6 +29,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var frameCounter = -1
   
   //MARK: Follow gesture variables
+  var isWaitingForGesture = true
   let predictGestureMovingEvery = 9
   var previousFingerTipPosition = CGPoint(x: -1, y: -1)
   var movingState = MovingState.nothing {
@@ -40,7 +41,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   //MARK: Logic management
   let gestureManager = ControlManager.shared
-  
   
   //MARK: Scenes
   let shipScene = SCNScene(named: "art.scnassets/ship.scn")!
@@ -62,6 +62,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    
+    gestureManager.delegate = self
     
     do {
       model = try Pose6AndBackground(configuration: MLModelConfiguration())
@@ -289,6 +291,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
 extension ViewController: ARSessionDelegate{
   func session(_ session: ARSession, didUpdate frame: ARFrame) {
+    if !isWaitingForGesture { return }
+    
     frameCounter += 1
     
     let pixelBuffer = frame.capturedImage
@@ -388,5 +392,18 @@ extension ViewController: ARSessionDelegate{
     predictionLabel.text = predictionAndMoving
     predictionLabel2.text = predictionAndMoving
   }
+}
+
+extension ViewController : GestureRecognitionDelegate {
+  func disableGestureRecognitionForShort(){
+    isWaitingForGesture = false
+    DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+      self.isWaitingForGesture = true
+    })
+  }
+}
+
+protocol GestureRecognitionDelegate{
+  func disableGestureRecognitionForShort()
 }
 

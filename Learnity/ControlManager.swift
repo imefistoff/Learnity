@@ -13,6 +13,7 @@ class ControlManager {
   private init() {}
   
   //MARK: Variables
+  var delegate : ViewController?
   var flowState : FlowState = .view {
     didSet{
       handleFlowStateChange()
@@ -32,6 +33,7 @@ class ControlManager {
   }
   
   private func handleFlowStateChange(){
+    delegate?.disableGestureRecognitionForShort()
     switch flowState {
       case .view:
         print("Enter on View mode")
@@ -74,6 +76,7 @@ class ControlManager {
   private func handleGestureOne() {
     switch flowState {
       case .view:
+        flowState = .view
         print("focus next")
       case .focus:
         print("do nothing")
