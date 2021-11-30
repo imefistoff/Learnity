@@ -15,7 +15,7 @@ class GesturesPresenter {
   var gesturesList : [GestureData] = []
   var focusedObject : SCNNode!
   
-  func setGesturesListBasedOnFlow(flowState: FlowState) {
+  func setGesturesList(for flowState: FlowState) {
     switch flowState {
     case .view:
       gesturesList = [
