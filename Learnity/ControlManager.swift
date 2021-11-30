@@ -10,13 +10,16 @@ import Foundation
 class ControlManager {
   //Singletone
   static let shared = ControlManager()
-  private init() {}
+  private init() {
+    GesturesPresenter.shared.setGesturesListBasedOnFlow(flowState: flowState)
+  }
   
   //MARK: Variables
   var delegate : ViewController?
   var flowState : FlowState = .view {
     didSet{
       handleFlowStateChange()
+      GesturesPresenter.shared.setGesturesListBasedOnFlow(flowState: flowState)
     }
   }
   var gestureType: GestureType = .nothing {

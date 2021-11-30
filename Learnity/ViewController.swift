@@ -9,12 +9,14 @@ import UIKit
 import SceneKit
 import ARKit
 import SceneKit.ModelIO
+import DeviceKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
   
   @IBOutlet weak var sceneViewLeft: ARSCNView!
   @IBOutlet weak var sceneViewRight: ARSCNView!
   @IBOutlet weak var debugView: UIView!
+  @IBOutlet weak var gestureTableView: UITableView!
   
   @IBOutlet weak var predictionLabel: UILabel!
   @IBOutlet weak var predictionLabel2: UILabel!
@@ -58,11 +60,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   let isDebug = true
   var selectedTransformationType = GeometricTransformationTypes.translation
   
-  
-  
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+    gestureTableView.delegate = self
+    gestureTableView.dataSource = self
     gestureManager.delegate = self
     
     do {
@@ -152,6 +153,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
       translateAndRotateObjectAction(startObject: currentObjects[prevIndexFocusedObject], finalObject: initialObjectsClones[prevIndexFocusedObject], isReturningToInitialPosition: true)
     }
+    
+    // TODO: add this line after merge in focusOnNextObject 
+    GesturesPresenter.shared.focusedObject = currentObjects[indexFocusedObject]
     
     moveObjectInFrontOfCamera()
   }
@@ -322,7 +326,7 @@ extension ViewController: ARSessionDelegate{
           gestureManager.setGestureType(handPosePrediction.label)
         } else {
           // TODO: check if we actually need this state update
-          gestureManager.setGestureType(GestureType.nothing.rawValue)
+//          gestureManager.setGestureType(GestureType.nothing.rawValue)
         }
       }catch{
         print("Prediction error: \(error)")
@@ -401,6 +405,22 @@ extension ViewController : GestureRecognitionDelegate {
       self.isWaitingForGesture = true
     })
   }
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource{
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return GesturesPresenter.shared.gesturesList.count
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "gestureInfo", for: indexPath) as! GestureInfoCell
+    let currentGest = GesturesPresenter.shared.gesturesList[indexPath.row]
+    
+    cell.setGesture(gesture: currentGest)
+    return cell
+  }
+  
+  
 }
 
 protocol GestureRecognitionDelegate{
