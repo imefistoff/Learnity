@@ -10,15 +10,19 @@ import Foundation
 class ControlManager {
   //Singletone
   static let shared = ControlManager()
-  private init() {}
+  private init() {
+    GesturesPresenter.shared.setGesturesList(for: flowState)
+  }
   
   //MARK: Variables
   var delegate : ViewController?
   var flowState : FlowState = .view {
     didSet{
-      handleFlowStateChange()
+      GesturesPresenter.shared.setGesturesList(for: flowState)
+      delegate?.gestureTableView.reloadData()
     }
   }
+  
   var gestureType: GestureType = .nothing {
     didSet{
       print(gestureType.rawValue)
@@ -30,19 +34,6 @@ class ControlManager {
   func setGestureType(_ type: String){
     let enumGestureType = GestureType(rawValue: type) ?? .nothing
     self.gestureType = enumGestureType
-  }
-  
-  private func handleFlowStateChange(){
-    switch flowState {
-      case .view:
-        print("Enter on View mode")
-      case .edit:
-        print("Enter on Edit mode")
-      case .focus:
-        print("Enter on Focus mode")
-      case .action:
-        print("Enter on Action mode")
-    }
   }
   
   private func handleDetectedGesture(){
@@ -93,6 +84,8 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOxSelected = !delegate.isOxSelected
         }
+      case .notes:
+        print("notes")
     }
   }
   
@@ -109,6 +102,8 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOySelected = !delegate.isOySelected
         }
+      case .notes:
+        print("notes")
     }
   }
   
@@ -125,6 +120,8 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOzSelected = !delegate.isOzSelected
         }
+      case .notes:
+        print("notes")
     }
   }
   
@@ -139,6 +136,8 @@ class ControlManager {
         flowState = .focus
       case .action:
         delegate?.increaseTransformActionValue()
+      case .notes:
+        print("notes")
     }
   }
   
@@ -154,6 +153,8 @@ class ControlManager {
         flowState = .focus
       case .action:
         delegate?.decreaseTransformActionValue()
+      case .notes:
+        print("notes")
     }
   }
   
@@ -176,6 +177,8 @@ class ControlManager {
         delegate?.removeUpperLayer()
       case .action:
         print("do nothing")
+      case .notes:
+        print("notes")
     }
   }
   
@@ -184,7 +187,7 @@ class ControlManager {
   }
   
   private func handleGesturePalm() {
-    //nu action da notes (Va fi adaugat de Mada)
+    //palm will be used only for action for stopping modifications
     if flowState != .action {
       print("go to notes mode")
     } else {

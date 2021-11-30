@@ -38,6 +38,10 @@ enum GestureType: String {
   case fingerSnap = "FingerSnap"
   case palm = "Palm"
   case nothing = "Nothing"
+  
+  func getImage() -> UIImage {
+    return UIImage(named: self.rawValue) ?? UIImage(named: "One")!
+  }
 }
 
 enum FlowState: String {
@@ -45,4 +49,5 @@ enum FlowState: String {
   case focus
   case edit
   case action
+  case notes
 }
