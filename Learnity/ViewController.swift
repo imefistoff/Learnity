@@ -416,10 +416,19 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     let currentGest = GesturesPresenter.shared.gesturesList[indexPath.row]
     
     cell.setGesture(gesture: currentGest)
+    
+    if indexPath.row == 0 {
+      cell.layer.cornerRadius = 20
+      cell.layer.cornerCurve = .continuous
+      cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+    } else if indexPath.row == GesturesPresenter.shared.gesturesList.count - 1 {
+      cell.layer.cornerRadius = 20
+      cell.layer.cornerCurve = .continuous
+      cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+    }
+    
     return cell
   }
-  
-  
 }
 
 protocol GestureRecognitionDelegate{
