@@ -6,6 +6,5 @@ target 'Learnity' do
   use_frameworks!
 
   # Pods for Learnity
-pod 'DeviceKit', '~> 4.0'
 
 end

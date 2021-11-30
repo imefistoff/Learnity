@@ -9,7 +9,6 @@ import UIKit
 import SceneKit
 import ARKit
 import SceneKit.ModelIO
-import DeviceKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
   

@@ -135,7 +135,6 @@
 				AE00736D27272EBE00CC11C2 /* Sources */,
 				AE00736E27272EBE00CC11C2 /* Frameworks */,
 				AE00736F27272EBE00CC11C2 /* Resources */,
-				53C039192D7315728D950159 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -195,23 +194,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		53C039192D7315728D950159 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Learnity/Pods-Learnity-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Learnity/Pods-Learnity-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Learnity/Pods-Learnity-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		FB72F8D91C3D7C915EC46A16 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
