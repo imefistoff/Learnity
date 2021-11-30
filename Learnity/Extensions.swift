@@ -10,6 +10,18 @@ import SceneKit
 
 
 extension SCNNode {
+  var isFocusable : Bool {
+    get {
+      return self.name?.contains("focusable") ?? false
+    }
+  }
+  
+  var isLayered : Bool {
+    get {
+      return self.name?.contains("layered") ?? false
+    }
+  }
+  
   func centerPivot() {
     var min = SCNVector3Zero
     var max = SCNVector3Zero
