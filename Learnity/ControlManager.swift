@@ -33,7 +33,6 @@ class ControlManager {
   }
   
   private func handleFlowStateChange(){
-    delegate?.disableGestureRecognitionForShort()
     switch flowState {
       case .view:
         print("Enter on View mode")
@@ -47,6 +46,10 @@ class ControlManager {
   }
   
   private func handleDetectedGesture(){
+    if gestureType != .nothing && gestureType != .background {
+      delegate?.disableGestureRecognitionForShort()
+    }
+    
     switch gestureType {
       case .one:
         handleGestureOne()
@@ -76,40 +79,52 @@ class ControlManager {
   private func handleGestureOne() {
     switch flowState {
       case .view:
-        flowState = .view
-        print("focus next")
+        //Focus on first focusable object in scene
+        flowState = .focus
+        delegate?.focusOnNextObject()
       case .focus:
         print("do nothing")
       case .edit:
-        print("select translation mode")
+        //Enter on Action(Translation) mode
+        flowState = .action
+        delegate?.selectedTransformationType = .translation
       case .action:
-        print("toggle x axe")
+        //Toggle OX axe for edit
+        if let delegate = delegate {
+          delegate.isOxSelected = !delegate.isOxSelected
+        }
     }
   }
   
   private func handleGestureTwo() {
     switch flowState {
-      case .view:
-        print("do nothing")
-      case .focus:
+      case .view,.focus:
         print("do nothing")
       case .edit:
-        print("select rotation mode")
+        //Enter on Action(Rotation) mode
+        flowState = .action
+        delegate?.selectedTransformationType = .rotation
       case .action:
-        print("toggle y axe")
+        //Toggle OY axe for edit
+        if let delegate = delegate {
+          delegate.isOySelected = !delegate.isOySelected
+        }
     }
   }
   
   private func handleGestureThree() {
     switch flowState {
-      case .view:
-        print("do nothing")
-      case .focus:
+      case .view,.focus:
         print("do nothing")
       case .edit:
-        print("select scale mode")
+        //Enter on Action(Scale) mode
+        flowState = .action
+        delegate?.selectedTransformationType = .scale
       case .action:
-        print("toggle z axe")
+        //Toggle OZ axe for edit
+        if let delegate = delegate {
+          delegate.isOzSelected = !delegate.isOzSelected
+        }
     }
   }
   
@@ -118,11 +133,12 @@ class ControlManager {
       case .view:
         print("do nothing")
       case .focus:
-        print("confirm object and enter Edit flow")
+        flowState = .edit
       case .edit:
-        print("save object changes and return to Focus flow with current object selected")
+        delegate?.saveChanges()
+        flowState = .focus
       case .action:
-        print("increase value")
+        delegate?.increaseTransformActionValue()
     }
   }
   
@@ -131,11 +147,13 @@ class ControlManager {
       case .view:
         print("do nothing")
       case .focus:
-        print("unfocus and return to View flow")
+        delegate?.unfocus()
+        flowState = .view
       case .edit:
-        print("discard changes")
+        delegate?.discardChanges()
+        flowState = .focus
       case .action:
-        print("decrease value")
+        delegate?.decreaseTransformActionValue()
     }
   }
   
@@ -151,11 +169,11 @@ class ControlManager {
   private func handleGestureSwipe() {
     switch flowState {
       case .view:
-        print("go to next scene")
+        delegate?.loadNextScene()
       case .focus:
-        print("go to next object")
+        delegate?.focusOnNextObject()
       case .edit:
-        print("remove layer")
+        delegate?.removeUpperLayer()
       case .action:
         print("do nothing")
     }
@@ -166,10 +184,11 @@ class ControlManager {
   }
   
   private func handleGesturePalm() {
-    if flowState == .action {
-      print("save actions and go back to Edit flow")
+    //nu action da notes (Va fi adaugat de Mada)
+    if flowState != .action {
+      print("go to notes mode")
     } else {
-      print("do nothing")
+      print("exit notes mode")
     }
   }
 }
