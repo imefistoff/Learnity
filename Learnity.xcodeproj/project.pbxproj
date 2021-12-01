@@ -18,7 +18,6 @@
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
 		AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */; };
 		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
-		AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */; };
 		AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = AED058862745400100AB4D9E /* SimpleParticle.sks */; };
 		E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B20532752A51800D6B53E /* GestureInfoCell.swift */; };
 		E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205527554A8300D6B53E /* GesturesPresenter.swift */; };
@@ -38,7 +37,6 @@
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Pose6AndBackground.mlmodel; sourceTree = "<group>"; };
 		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
-		AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = oneClassifier.mlpackage; sourceTree = "<group>"; };
 		AED058862745400100AB4D9E /* SimpleParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SimpleParticle.sks; sourceTree = "<group>"; };
 		C5B74856FEEBBCB8DBB71FF6 /* Pods_Learnity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Learnity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C0CDE520158184F00659CC /* Pods-Learnity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Learnity.release.xcconfig"; path = "Target Support Files/Pods-Learnity/Pods-Learnity.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,7 +100,6 @@
 			isa = PBXGroup;
 			children = (
 				AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */,
-				AED0588427450F7000AB4D9E /* oneClassifier.mlpackage */,
 			);
 			path = ML;
 			sourceTree = "<group>";
@@ -231,7 +228,6 @@
 				E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */,
 				AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */,
 				AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */,
-				AED0588527450F7000AB4D9E /* oneClassifier.mlpackage in Sources */,
 				E32B205827554AAF00D6B53E /* GestureData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

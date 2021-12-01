@@ -15,6 +15,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   @IBOutlet weak var sceneViewLeft: ARSCNView!
   @IBOutlet weak var sceneViewRight: ARSCNView!
   @IBOutlet weak var debugView: UIView!
+  @IBOutlet weak var selectedAxesView: UIStackView!
   @IBOutlet weak var gestureTableView: UITableView!
   
   @IBOutlet weak var predictionLabel: UILabel!
@@ -23,6 +24,41 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var currentObjects = [SCNNode]()
   var initialObjectsClones = [SCNNode]()
   var indexFocusedObject = -1
+  
+  //MARK: UI variables
+  var isGesturesHubVisible = true {
+    didSet {
+      gestureTableView.isHidden = !isGesturesHubVisible
+      
+    }
+  }
+  var isAxesHudVisible = false {
+    didSet {
+      selectedAxesView.isHidden = !isAxesHudVisible
+      
+      // TODO: move into a function
+      if isAxesHudVisible {
+        gestureTableView.isHidden = true
+      }
+
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+        self.isAxesHudVisible = false
+        if self.isGesturesHubVisible {
+          self.gestureTableView.isHidden = false
+        }
+      })
+    }
+  }
+  
+  //MARK: Transformations variables
+  var translationStep : Float = 0.3 // 0.3 meters
+  var rotationStep : CGFloat = 1 // 1 radian
+  var scaleStep : CGFloat = 1.10 // +10% scale
+  var negativeScaleStep : CGFloat = 0.9 // -10% scale
+  
+  var isOxSelected = false
+  var isOySelected = false
+  var isOzSelected = false
   
   //MARK: Prediction variables
   var model : Pose6AndBackground!
@@ -56,7 +92,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   @IBOutlet weak var xSwitch: UISwitch!
   @IBOutlet weak var ySwitch: UISwitch!
   @IBOutlet weak var zSwitch: UISwitch!
-  let isDebug = true
+  let isDebug = false
   var selectedTransformationType = GeometricTransformationTypes.translation
   
   override func viewDidLoad() {
@@ -88,10 +124,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     collectAllObjects(from: getNextScene())
     insertNewObjectsIntoScene()
-    
-    if let camera = sceneViewLeft.pointOfView?.camera {
-      camera.fieldOfView = CGFloat(138)
-    }
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -130,7 +162,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   @IBAction func loadNextScene(_ sender: Any) {
-    indexCurrentScene += 1
+    if indexCurrentScene > scenes.count - 1 {
+      indexCurrentScene = 0
+    }else{
+      indexCurrentScene += 1
+    }
     resetSceneInitialData()
     removeOldObjectsFromScene()
     let nextScene = getNextScene()
@@ -165,17 +201,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   @IBAction func tapPlus(_ sender: Any) {
     switch selectedTransformationType {
-    case .translation : translate(0.3)
-    case .rotation : rotate(5)
-    case .scale : scale(1.25)
+      case .translation : translate(by: 0.3)
+      case .rotation : rotate(by: 5)
+      case .scale : scale(by: 1.25)
     }
   }
   
   @IBAction func tapMinus(_ sender: Any) {
     switch selectedTransformationType {
-    case .translation : translate(-0.3)
-    case .rotation : rotate(-5)
-    case .scale : scale(0.75)
+      case .translation : translate(by: -0.3)
+      case .rotation : rotate(by: -5)
+      case .scale : scale(by: 0.75)
     }
   }
   
@@ -192,9 +228,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   func getNextScene() -> SCNScene {
-    if indexCurrentScene > scenes.count - 1 {
-      indexCurrentScene = 0
-    }
     return scenes[indexCurrentScene]
   }
   
@@ -239,7 +272,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     startObject.runAction(focusAction)
   }
   
-  func rotate(_ step: CGFloat){
+  func rotate(by step: CGFloat){
     if indexFocusedObject != -1 {
       let rotateAction = SCNAction.rotate(by: step,
                                           around: SCNVector3(xSwitch.isOn ? 1 : 0,
@@ -250,14 +283,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
   }
   
-  func scale(_ step: CGFloat){
+  func scale(by step: CGFloat){
     if indexFocusedObject != -1 {
       let scaleAction = SCNAction.scale(by: step, duration: 2)
       currentObjects[indexFocusedObject].runAction(scaleAction)
     }
   }
   
-  func translate(_ step: Float) {
+  func translate(by step: Float) {
     if indexFocusedObject != -1 {
       let translateAction = SCNAction.move(by: SCNVector3(xSwitch.isOn ? step: 0,
                                                           ySwitch.isOn ? step : 0,
@@ -380,9 +413,9 @@ extension ViewController: ARSessionDelegate{
   private func handleChangeMovingState(_ newValue : MovingState){
     switch newValue {
     case .up:
-      rotate(0.25)
+        rotate(by: 0.25)
     case .down:
-      rotate(-0.25)
+        rotate(by: -0.25)
     case .nothing:
       if !currentObjects.isEmpty && indexFocusedObject >= 0 {
         currentObjects[indexFocusedObject].removeAllActions()
@@ -404,6 +437,86 @@ extension ViewController : GestureRecognitionDelegate {
       self.isWaitingForGesture = true
     })
   }
+  
+  func focusOnNextObject() {
+    let prevIndexFocusedObject = indexFocusedObject
+    if indexFocusedObject < 0 || indexFocusedObject >= currentObjects.count - 1 {
+      indexFocusedObject = 0
+    } else {
+      indexFocusedObject += 1
+    }
+    
+    //return object to its initial position
+    if prevIndexFocusedObject != -1 {
+      let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
+      currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
+      translateAndRotateObjectAction(startObject: currentObjects[prevIndexFocusedObject], finalObject: initialObjectsClones[prevIndexFocusedObject], isReturningToInitialPosition: true)
+    }
+    
+    GesturesPresenter.shared.focusedObject = currentObjects[indexFocusedObject]
+    
+    moveObjectInFrontOfCamera()
+  }
+  
+  func saveChanges() {
+    if indexFocusedObject != -1
+    {
+      initialObjectsClones[indexFocusedObject]  =  currentObjects[indexFocusedObject].clone()
+    }
+  }
+  
+  func discardChanges() {
+    if indexFocusedObject != -1
+    {
+      let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
+      currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
+      moveObjectInFrontOfCamera()
+    }
+  }
+  
+  func increaseTransformActionValue() {
+    switch selectedTransformationType {
+      case .translation : translate(by: translationStep)
+      case .rotation : rotate(by: rotationStep)
+      case .scale : scale(by: scaleStep)
+    }
+  }
+  
+  func decreaseTransformActionValue() {
+    switch selectedTransformationType {
+      case .translation : translate(by: -translationStep)
+      case .rotation : rotate(by: -rotationStep)
+      case .scale : scale(by: negativeScaleStep)
+    }
+  }
+  
+  func unfocus() {
+    //return object to its initial position
+    if indexFocusedObject != -1 {
+      let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
+      currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
+      translateAndRotateObjectAction(startObject: currentObjects[indexFocusedObject], finalObject: initialObjectsClones[indexFocusedObject], isReturningToInitialPosition: true)
+    }
+    
+    indexFocusedObject = -1
+  }
+  
+  func loadNextScene() {
+    if indexCurrentScene > scenes.count - 1 {
+      indexCurrentScene = 0
+    }else{
+      indexCurrentScene += 1
+    }
+    resetSceneInitialData()
+    removeOldObjectsFromScene()
+    let nextScene = getNextScene()
+    collectAllObjects(from: nextScene)
+    insertNewObjectsIntoScene()
+  }
+  
+  func removeUpperLayer() {
+    //daca este layered sa se faca ceva
+  }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
@@ -415,23 +528,20 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     let cell = tableView.dequeueReusableCell(withIdentifier: "gestureInfo", for: indexPath) as! GestureInfoCell
     let currentGest = GesturesPresenter.shared.gesturesList[indexPath.row]
     
-    cell.setGesture(gesture: currentGest)
-    
-    if indexPath.row == 0 {
-      cell.layer.cornerRadius = 20
-      cell.layer.cornerCurve = .continuous
-      cell.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
-    } else if indexPath.row == GesturesPresenter.shared.gesturesList.count - 1 {
-      cell.layer.cornerRadius = 20
-      cell.layer.cornerCurve = .continuous
-      cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-    }
-    
+    cell.setGesture(gesture: currentGest, index: indexPath.row)
     return cell
   }
 }
 
 protocol GestureRecognitionDelegate{
   func disableGestureRecognitionForShort()
+  func focusOnNextObject()
+  func saveChanges()
+  func discardChanges()
+  func increaseTransformActionValue()
+  func decreaseTransformActionValue()
+  func unfocus()
+  func loadNextScene()
+  func removeUpperLayer()
 }
 
