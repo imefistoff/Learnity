@@ -51,10 +51,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   //MARK: Transformations variables
-  var translationStep : Float = 0.3 // 0.3 meters
-  var rotationStep : CGFloat = 1 // 1 radian
-  var scaleStep : CGFloat = 1.10 // +10% scale
-  var negativeScaleStep : CGFloat = 0.9 // -10% scale
+  var translationStep : Float = 0.1 // 0.1 meters
+  var rotationStep : CGFloat = 0.1 // 0.1 radian => aprox 6 degree 
+  var scaleStep : CGFloat = 1.05 // +5% scale
+  var negativeScaleStep : CGFloat = 0.95 // -5% scale
   
   var isOxSelected = false
   var isOySelected = false
@@ -433,7 +433,14 @@ extension ViewController: ARSessionDelegate{
 extension ViewController : GestureRecognitionDelegate {
   func disableGestureRecognitionForShort(){
     isWaitingForGesture = false
-    DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+      self.isWaitingForGesture = true
+    })
+  }
+  
+  func disableGestureRecognitionForVeryShort(){
+    isWaitingForGesture = false
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
       self.isWaitingForGesture = true
     })
   }
@@ -535,6 +542,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
 
 protocol GestureRecognitionDelegate{
   func disableGestureRecognitionForShort()
+  func disableGestureRecognitionForVeryShort()
   func focusOnNextObject()
   func saveChanges()
   func discardChanges()
