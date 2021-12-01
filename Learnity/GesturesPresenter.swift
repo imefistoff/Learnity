@@ -20,11 +20,13 @@ class GesturesPresenter {
       case .view:
         gesturesList = [
           GestureData(gesture: GestureType.one, label: "Focus first object"),
-          GestureData(gesture: GestureType.swipe, label: "Change view")
+          GestureData(gesture: GestureType.swipeLeft, label: "Prev scene"),
+          GestureData(gesture: GestureType.swipeRight, label: "Next scene")
         ]
       case .focus:
         gesturesList = [
-          GestureData(gesture: GestureType.swipe, label: "Focus next object"),
+          GestureData(gesture: GestureType.swipeLeft, label: "Focus prev object"),
+          GestureData(gesture: GestureType.swipeRight, label: "Focus next object"),
           GestureData(gesture: GestureType.thumbDown, label: "Unfocus object"),
           GestureData(gesture: GestureType.thumbUp, label: "Select object")
         ]
@@ -37,19 +39,26 @@ class GesturesPresenter {
           GestureData(gesture: GestureType.thumbDown, label: "Discard changes")
         ]
         if focusedObject.isLayered {
-          gesturesList.append(GestureData(gesture: GestureType.swipe, label: "Remove layer"))
+          gesturesList.insert(contentsOf: [GestureData(gesture: GestureType.swipeLeft, label: "Remove layer"),
+                                           GestureData(gesture: GestureType.swipeRight, label: "Revert layer")], at: 3)
         }
       case .action:
         gesturesList = [
-          GestureData(gesture: GestureType.one, label: "Select axe X"),
-          GestureData(gesture: GestureType.two, label: "Select axe Y"),
-          GestureData(gesture: GestureType.three, label: "Select axe Z"),
           GestureData(gesture: GestureType.thumbUp, label: "Increase"),
           GestureData(gesture: GestureType.thumbDown, label: "Decrease"),
-          GestureData(gesture: GestureType.swipe, label: "Done")
+          GestureData(gesture: GestureType.swipeLeft, label: "Done")
         ]
+        if  ControlManager.shared.delegate?.selectedTransformationType != .scale {
+          gesturesList.insert(contentsOf: [GestureData(gesture: GestureType.one, label: "Select axe X"),
+                                           GestureData(gesture: GestureType.two, label: "Select axe Y"),
+                                           GestureData(gesture: GestureType.three, label: "Select axe Z")], at: 0)
+        }
       case .notes:
-        print("ciao")
+        gesturesList = [
+          GestureData(gesture: GestureType.pinch, label: "Draw"),
+          GestureData(gesture: GestureType.thumbUp, label: "Save changes"),
+          GestureData(gesture: GestureType.thumbDown, label: "Discard changes"),
+        ]
     }
   }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class ControlManager {
   //Singletone
@@ -40,9 +41,9 @@ class ControlManager {
   
   private func handleDetectedGesture(){
     if flowState == .action && ( gestureType == .thumbUp || gestureType == .thumbDown ){
-      delegate?.disableGestureRecognitionForVeryShort()
-    } else if gestureType != .nothing && gestureType != .background && ( flowState != .notes && gestureType != .pinch ) {
-      delegate?.disableGestureRecognitionForShort()
+      delegate?.disableGestureRecognition(for: 0.2)
+    } else if (gestureType != .nothing && gestureType != .background && gestureType != .pinch) || ( gestureType == .pinch && flowState != .notes) {
+      delegate?.disableGestureRecognition(for: 2)
     }
     
     switch gestureType {
@@ -60,7 +61,7 @@ class ControlManager {
         handleGesturePinch()
       case .background:
         handleGestureBackground()
-      case .swipe:
+      case .swipeLeft, .swipeRight:
         handleGestureSwipe()
       case .fingerSnap:
         handleGestureFingerSnap()
@@ -85,7 +86,9 @@ class ControlManager {
         //Toggle OX axe for edit
         if let delegate = delegate {
           delegate.isOxSelected = !delegate.isOxSelected
-          delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          if delegate.selectedTransformationType != .scale {
+            delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          }
         }
       case .notes, .focus:
         print("do nothing")
@@ -104,7 +107,9 @@ class ControlManager {
         //Toggle OY axe for edit
         if let delegate = delegate {
           delegate.isOySelected = !delegate.isOySelected
-          delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          if delegate.selectedTransformationType != .scale {
+            delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          }
         }
     }
   }
@@ -121,7 +126,9 @@ class ControlManager {
         //Toggle OZ axe for edit
         if let delegate = delegate {
           delegate.isOzSelected = !delegate.isOzSelected
-          delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          if delegate.selectedTransformationType != .scale {
+            delegate.isAxesHudVisible = !delegate.isAxesHudVisible
+          }
         }
     }
   }
@@ -164,9 +171,11 @@ class ControlManager {
   private func handleGesturePinch() {
     switch flowState {
       case .view, .focus, .edit, .action:
-        flowState = .notes
+        // Left out until implementation is done
+//        flowState = .notes
+        break
       case .notes:
-        print("desenez ebati")
+        print("drawing")
     }
   }
   
@@ -194,7 +203,7 @@ class ControlManager {
   }
   
   private func handleGesturePalm() {
-    if flowState != .action {
+    if flowState == .action {
       //Terminate current actioning mode (translate/rotate/scale)
       flowState = .edit
     }
