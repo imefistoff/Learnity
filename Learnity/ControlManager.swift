@@ -16,8 +16,10 @@ class ControlManager {
   
   //MARK: Variables
   var delegate : ViewController?
+  var previousFlowState : FlowState = .view
   var flowState : FlowState = .view {
     didSet{
+      previousFlowState = oldValue
       GesturesPresenter.shared.setGesturesList(for: flowState)
       delegate?.gestureTableView.reloadData()
     }
@@ -37,7 +39,9 @@ class ControlManager {
   }
   
   private func handleDetectedGesture(){
-    if gestureType != .nothing && gestureType != .background {
+    if flowState == .action && ( gestureType == .thumbUp || gestureType == .thumbDown ){
+      delegate?.disableGestureRecognitionForVeryShort()
+    } else if gestureType != .nothing && gestureType != .background && ( flowState != .notes && gestureType != .pinch ) {
       delegate?.disableGestureRecognitionForShort()
     }
     
@@ -73,8 +77,6 @@ class ControlManager {
         //Focus on first focusable object in scene
         flowState = .focus
         delegate?.focusOnNextObject()
-      case .focus:
-        print("do nothing")
       case .edit:
         //Enter on Action(Translation) mode
         flowState = .action
@@ -84,14 +86,14 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOxSelected = !delegate.isOxSelected
         }
-      case .notes:
-        print("notes")
+      case .notes, .focus:
+        print("do nothing")
     }
   }
   
   private func handleGestureTwo() {
     switch flowState {
-      case .view,.focus:
+      case .view, .focus, .notes:
         print("do nothing")
       case .edit:
         //Enter on Action(Rotation) mode
@@ -102,14 +104,12 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOySelected = !delegate.isOySelected
         }
-      case .notes:
-        print("notes")
     }
   }
   
   private func handleGestureThree() {
     switch flowState {
-      case .view,.focus:
+      case .view, .focus, .notes:
         print("do nothing")
       case .edit:
         //Enter on Action(Scale) mode
@@ -120,8 +120,6 @@ class ControlManager {
         if let delegate = delegate {
           delegate.isOzSelected = !delegate.isOzSelected
         }
-      case .notes:
-        print("notes")
     }
   }
   
@@ -137,7 +135,8 @@ class ControlManager {
       case .action:
         delegate?.increaseTransformActionValue()
       case .notes:
-        print("notes")
+        // TODO: Save changes
+        flowState = previousFlowState
     }
   }
   
@@ -154,13 +153,18 @@ class ControlManager {
       case .action:
         delegate?.decreaseTransformActionValue()
       case .notes:
-        print("notes")
+        // TODO: Discard changes
+        flowState = previousFlowState
     }
   }
   
   private func handleGesturePinch() {
-    print("write on the whiteboard")
-    // TODO: ne gandim la scenariul in care vrei sa stergi
+    switch flowState {
+      case .view, .focus, .edit, .action:
+        flowState = .notes
+      case .notes:
+        print("desenez ebati")
+    }
   }
   
   private func handleGestureBackground() {
@@ -187,11 +191,9 @@ class ControlManager {
   }
   
   private func handleGesturePalm() {
-    //palm will be used only for action for stopping modifications
     if flowState != .action {
-      print("go to notes mode")
-    } else {
-      print("exit notes mode")
+      //Terminate current actioning mode (translate/rotate/scale)
+      flowState = .edit
     }
   }
 }
