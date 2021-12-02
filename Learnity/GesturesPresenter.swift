@@ -46,7 +46,7 @@ class GesturesPresenter {
         gesturesList = [
           GestureData(gesture: GestureType.thumbUp, label: "Increase"),
           GestureData(gesture: GestureType.thumbDown, label: "Decrease"),
-          GestureData(gesture: GestureType.swipeLeft, label: "Done")
+          GestureData(gesture: GestureType.palm, label: "Done")
         ]
         if  ControlManager.shared.delegate?.selectedTransformationType != .scale {
           gesturesList.insert(contentsOf: [GestureData(gesture: GestureType.one, label: "Select axe X"),

@@ -19,12 +19,6 @@
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YLC-rd-Izq">
                                 <rect key="frame" x="448" y="0.0" width="448" height="414"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jes-be-0hF">
-                                        <rect key="frame" x="203.33333333333337" y="11.999999999999998" width="41.333333333333343" height="20.333333333333329"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d5j-kR-3VW">
                                         <rect key="frame" x="-40" y="0.0" width="488" height="414"/>
                                     </arscnView>
@@ -64,8 +58,6 @@
                                         <variation key="heightClass=compact-widthClass=regular" constant="50"/>
                                     </constraint>
                                     <constraint firstItem="d5j-kR-3VW" firstAttribute="leading" secondItem="YLC-rd-Izq" secondAttribute="leading" constant="-40" id="Aqp-He-7aw"/>
-                                    <constraint firstItem="jes-be-0hF" firstAttribute="centerX" secondItem="YLC-rd-Izq" secondAttribute="centerX" id="T3z-Tc-YOx"/>
-                                    <constraint firstItem="jes-be-0hF" firstAttribute="top" secondItem="YLC-rd-Izq" secondAttribute="top" constant="12" id="XLi-C9-gAo"/>
                                     <constraint firstAttribute="bottom" secondItem="d5j-kR-3VW" secondAttribute="bottom" id="aGg-aq-kdm"/>
                                     <constraint firstItem="ujh-ch-xbX" firstAttribute="top" secondItem="YLC-rd-Izq" secondAttribute="top" constant="60" id="kIQ-pQ-LMI"/>
                                     <constraint firstItem="d5j-kR-3VW" firstAttribute="top" secondItem="YLC-rd-Izq" secondAttribute="top" id="nZZ-Fz-bYx"/>
@@ -246,12 +238,6 @@
                                     <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9by-xg-zBI">
                                         <rect key="frame" x="0.0" y="0.0" width="488" height="414"/>
                                     </arscnView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HgV-QS-n4l">
-                                        <rect key="frame" x="203.33333333333334" y="381.66666666666669" width="41.333333333333343" height="20.333333333333314"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xA9-Ak-07X" userLabel="HUD View">
                                         <rect key="frame" x="124" y="70" width="200" height="344"/>
                                         <subviews>
@@ -433,9 +419,7 @@
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstItem="HgV-QS-n4l" firstAttribute="centerX" secondItem="PeG-WX-gXx" secondAttribute="centerX" id="6H4-B0-qIm"/>
                                     <constraint firstAttribute="bottom" secondItem="xA9-Ak-07X" secondAttribute="bottom" id="9oy-C7-qNn"/>
-                                    <constraint firstAttribute="bottom" secondItem="HgV-QS-n4l" secondAttribute="bottom" constant="12" id="FMX-o7-6lJ"/>
                                     <constraint firstAttribute="bottom" secondItem="9by-xg-zBI" secondAttribute="bottom" id="HPM-MW-CWE"/>
                                     <constraint firstItem="xA9-Ak-07X" firstAttribute="centerX" secondItem="PeG-WX-gXx" secondAttribute="centerX" id="Hjf-ac-uAT"/>
                                     <constraint firstItem="9by-xg-zBI" firstAttribute="leading" secondItem="PeG-WX-gXx" secondAttribute="leading" id="KCq-cl-vrX"/>
@@ -465,8 +449,6 @@
                         <outlet property="debugView" destination="Soe-Ky-hxZ" id="FMe-ld-IpQ"/>
                         <outlet property="gestureTableView" destination="tTg-Vj-POC" id="w8E-Sm-xLV"/>
                         <outlet property="leftSceneContainer" destination="PeG-WX-gXx" id="UUV-ew-vla"/>
-                        <outlet property="predictionLabel" destination="jes-be-0hF" id="JxW-5P-2Oc"/>
-                        <outlet property="predictionLabel2" destination="HgV-QS-n4l" id="jvN-6d-hGu"/>
                         <outlet property="sceneViewLeft" destination="9by-xg-zBI" id="hRr-40-mDa"/>
                         <outlet property="sceneViewRight" destination="d5j-kR-3VW" id="Vgb-ES-Jy8"/>
                         <outlet property="segmentedControl" destination="crI-Ul-E5D" id="Bzb-ST-r3o"/>

@@ -36,16 +36,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var isGesturesHudVisible = true
   var isAxesHudVisible = true {
     didSet {
-      toggleAxesHud()
+      toggleUIVIew(for: selectedAxesView, isVisible: isAxesHudVisible)
       
         // TODO: move into a function
       if isAxesHudVisible {
-        toggleGesturesHud(isVisible: false)
+        toggleUIVIew(for: gestureTableView, isVisible: false)
       }
       
-      DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
         if self.isGesturesHudVisible {
-          self.toggleGesturesHud(isVisible: true)
+          self.toggleUIVIew(for: self.gestureTableView, isVisible: true)
         }
         
         if self.isAxesHudVisible {
@@ -63,25 +63,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   var isOxSelected = false {
     didSet {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-        self.xHudSwitch.setOn(self.isOxSelected, animated: true)
-      })
+      toggleSwitch(for: xHudSwitch, isOn: isOxSelected)
     }
   }
   var isOySelected = false {
     didSet {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-        self.yHudSwitch.setOn(self.isOySelected, animated: true)
-      })
+      toggleSwitch(for: yHudSwitch, isOn: isOySelected)
     }
   }
   var isOzSelected = false {
     didSet {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-        self.zHudSwitch.setOn(self.isOzSelected, animated: true)
-      })
+      toggleSwitch(for: zHudSwitch, isOn: isOzSelected)
     }
   }
+  
+  
   
     //MARK: Gesture prediction variables
   var gestureModel : FullModelTest!
@@ -252,16 +248,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
   }
   
-  func toggleAxesHud() {
-    UIView.animate(withDuration: 0.5) {
-      self.selectedAxesView.alpha = self.isAxesHudVisible ? 1.0 : 0.0
+  func toggleUIVIew(for hud: UIView, isVisible: Bool) {
+    UIView.animate(withDuration: 0.4) {
+      hud.alpha = isVisible ? 1.0 : 0.0
     }
   }
   
-  func toggleGesturesHud(isVisible : Bool) {
-    UIView.animate(withDuration: 0.5) {
-      self.gestureTableView.alpha = isVisible ? 1.0 : 0.0
-    }
+  func toggleSwitch(for switchControl: UISwitch, isOn: Bool) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+      switchControl.setOn(isOn, animated: true)
+    })
   }
   
   func setupSoundPrediciton() {
@@ -439,7 +435,6 @@ extension ViewController: ARSessionDelegate{
         let handPosePrediction = try gestureModel.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
         if isWaitingForGesture && confidence > 0.5 {
-          updatePredictionLabels(with: "\(handPosePrediction.label) \(confidence)")
           gestureManager.setGestureType(handPosePrediction.label)
         } else {
             // TODO: check if we actually need this state update
@@ -480,11 +475,6 @@ extension ViewController: ARSessionDelegate{
   
   private func isFingerTipPositionNotSet(_ tip: CGPoint) -> Bool {
     return tip.x == -1
-  }
-  
-  func updatePredictionLabels(with message: String){
-    predictionLabel.text = message
-    predictionLabel2.text = message
   }
 }
 
@@ -625,7 +615,7 @@ extension ViewController: SoundRecognitionDelegate {
     resultsObserver.isWaitingForSnap = false
     DispatchQueue.main.sync {
       self.isGesturesHudVisible = !self.isGesturesHudVisible
-      self.toggleGesturesHud(isVisible: self.isGesturesHudVisible)
+      self.toggleUIVIew(for: self.gestureTableView, isVisible: self.isGesturesHudVisible)
     }
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
