@@ -20,6 +20,9 @@ class ControlManager {
   var previousFlowState : FlowState = .view
   var flowState : FlowState = .view {
     didSet{
+      if oldValue == .view && flowState == .focus {
+        delegate?.stopAnimationForScene()
+      }
       previousFlowState = oldValue
       GesturesPresenter.shared.setGesturesList(for: flowState)
       delegate?.gestureTableView.reloadData()

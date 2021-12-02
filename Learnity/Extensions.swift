@@ -26,6 +26,7 @@ extension SCNNode {
     var min = SCNVector3Zero
     var max = SCNVector3Zero
     self.__getBoundingBoxMin(&min, max: &max)
+    print("Min -> \(min.x) and max \(max.x)")
     self.pivot = SCNMatrix4MakeTranslation(
       min.x + (max.x - min.x)/2,
       min.y + (max.y - min.y)/2,

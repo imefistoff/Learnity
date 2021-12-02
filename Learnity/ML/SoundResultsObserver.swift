@@ -29,7 +29,7 @@ class SoundResultsObserver: NSObject, SNResultsObserving {
     
     print("\(classification.identifier): \(percentString) confidence.\n")
     
-    if classification.identifier == "Snap" {
+    if classification.identifier == "Snap" && confidence > 80  {
       if isWaitingForSnap {
         print("Snap was detected -> \(confidence).")
         delegate?.snapDetected()

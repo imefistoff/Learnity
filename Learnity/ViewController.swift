@@ -110,7 +110,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
     //MARK: Scenes
   let shipScene = SCNScene(named: "art.scnassets/ship.scn")!
-  let earthScene = SCNScene(named: "art.scnassets/earth.scn")!
+  let solarScene = SCNScene(named: "art.scnassets/solar_system.scn")!
   let geometryScene = SCNScene(named: "art.scnassets/geometry.scn")!
   var scenes = [SCNScene]()
   var indexCurrentScene = 0
@@ -144,7 +144,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     self.debugView.isHidden = !isDebug
     
-    scenes = [geometryScene, earthScene, shipScene]
+    scenes = [geometryScene, solarScene, shipScene]
     
     UIApplication.shared.isIdleTimerDisabled = true
     
@@ -301,8 +301,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   func insertNewObjectsIntoScene(){
-    for object in currentObjects {
-      sceneViewLeft.scene.rootNode.addChildNode(object)
+    for node in currentObjects {
+      sceneViewLeft.scene.rootNode.addChildNode(node)
     }
   }
   
@@ -323,11 +323,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   func collectAllObjects(from scene: SCNScene) {
-    for object in scene.rootNode.childNodes {
-      if object.name != nil {
-        object.centerPivot()
-        currentObjects.append(object.clone())
-        initialObjectsClones.append(object.clone())
+    let allNodes = scene.rootNode.childNodes { object, _ in
+      return true
+    }
+    for node in allNodes {
+      if node.isFocusable {
+        node.centerPivot()
+        currentObjects.append(node.clone())
+        initialObjectsClones.append(node.clone())
       }
     }
   }
@@ -604,6 +607,18 @@ extension ViewController : GestureRecognitionDelegate {
 //    }
       //daca este layered sa se faca ceva
   }
+  
+  func stopAnimationForScene() {
+    currentObjects.forEach { node in
+      node.animationPlayer(forKey: "transform")?.paused = true
+    }
+  }
+  
+  func playAnimationForScene() {
+    currentObjects.forEach { node in
+      node.animationPlayer(forKey: "transform")?.paused = false
+    }
+  }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
@@ -644,6 +659,7 @@ protocol GestureRecognitionDelegate{
   func unfocus()
   func loadNextScene()
   func removeUpperLayer()
+  func stopAnimationForScene()
 }
 
 protocol SoundRecognitionDelegate {
