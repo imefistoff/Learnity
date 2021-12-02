@@ -18,14 +18,15 @@ class SoundResultsObserver: NSObject, SNResultsObserving {
     guard let result = result as? SNClassificationResult else  { return }
     
     guard let classification = result.classifications.first else { return }
-
-//    let timeInSeconds = result.timeRange.start.seconds
+    
+    //let timeInSeconds = result.timeRange.start.seconds
+    
     
     let confidence = classification.confidence * 100.0
     
-    if classification.identifier == "Snap" {
+    if classification.identifier == "Snap" && confidence > 80  {
       if isWaitingForSnap {
-        print("Snap was detected -> \(confidence) confidence.")
+        print("Snap was detected -> \(confidence).")
         delegate?.snapDetected()
       }
     }
