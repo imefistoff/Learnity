@@ -16,12 +16,15 @@
 		AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */; };
 		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
-		AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */; };
 		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
 		AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = AED058862745400100AB4D9E /* SimpleParticle.sks */; };
 		E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B20532752A51800D6B53E /* GestureInfoCell.swift */; };
 		E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205527554A8300D6B53E /* GesturesPresenter.swift */; };
 		E32B205827554AAF00D6B53E /* GestureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205727554AAF00D6B53E /* GestureData.swift */; };
+		E3384AB02757C6D000B3EF3B /* SnapDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */; };
+		E3384AB22757C76F00B3EF3B /* SoundResultsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */; };
+		E3384AB42757E62F00B3EF3B /* FullModelTest.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */; };
+		E374C13B27577EA100A5E52C /* HandPose.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E374C13A27577EA100A5E52C /* HandPose.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +38,6 @@
 		AE00738027272EBF00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
-		AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Pose6AndBackground.mlmodel; sourceTree = "<group>"; };
 		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
 		AED058862745400100AB4D9E /* SimpleParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SimpleParticle.sks; sourceTree = "<group>"; };
 		C5B74856FEEBBCB8DBB71FF6 /* Pods_Learnity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Learnity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,6 +45,10 @@
 		E32B20532752A51800D6B53E /* GestureInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureInfoCell.swift; sourceTree = "<group>"; };
 		E32B205527554A8300D6B53E /* GesturesPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GesturesPresenter.swift; sourceTree = "<group>"; };
 		E32B205727554AAF00D6B53E /* GestureData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureData.swift; sourceTree = "<group>"; };
+		E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SnapDetector.mlmodel; sourceTree = "<group>"; };
+		E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundResultsObserver.swift; sourceTree = "<group>"; };
+		E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FullModelTest.mlmodel; sourceTree = "<group>"; };
+		E374C13A27577EA100A5E52C /* HandPose.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = HandPose.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +105,10 @@
 		AED0588127450BDE00AB4D9E /* ML */ = {
 			isa = PBXGroup;
 			children = (
-				AECC15EB274CD40E00B23895 /* Pose6AndBackground.mlmodel */,
+				E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */,
+				E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */,
+				E374C13A27577EA100A5E52C /* HandPose.mlmodel */,
+				E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */,
 			);
 			path = ML;
 			sourceTree = "<group>";
@@ -220,14 +229,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3384AB22757C76F00B3EF3B /* SoundResultsObserver.swift in Sources */,
+				E3384AB42757E62F00B3EF3B /* FullModelTest.mlmodel in Sources */,
 				AE00737927272EBE00CC11C2 /* ViewController.swift in Sources */,
 				AEA6B125274287700002FC20 /* Extensions.swift in Sources */,
 				AEA6B127274287B20002FC20 /* Enums.swift in Sources */,
 				E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */,
+				E374C13B27577EA100A5E52C /* HandPose.mlmodel in Sources */,
 				AE00737527272EBE00CC11C2 /* AppDelegate.swift in Sources */,
 				E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */,
 				AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */,
-				AECC15EC274CD40E00B23895 /* Pose6AndBackground.mlmodel in Sources */,
+				E3384AB02757C6D000B3EF3B /* SnapDetector.mlmodel in Sources */,
 				E32B205827554AAF00D6B53E /* GestureData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,9 +390,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XM2N9K924S;
+				DEVELOPMENT_TEAM = P322LLA65A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -410,9 +423,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XM2N9K924S;
+				DEVELOPMENT_TEAM = P322LLA65A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

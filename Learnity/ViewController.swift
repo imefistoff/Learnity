@@ -1,20 +1,23 @@
-//
-//  ViewController.swift
-//  Learnity
-//
-//  Created by Maxim Sargarovschi on 25.10.2021.
-//
+  //
+  //  ViewController.swift
+  //  Learnity
+  //
+  //  Created by Maxim Sargarovschi on 25.10.2021.
+  //
 
 import UIKit
 import SceneKit
 import ARKit
 import SceneKit.ModelIO
+import AVFAudio
+import SoundAnalysis
 
 class ViewController: UIViewController, ARSCNViewDelegate {
   
   @IBOutlet weak var sceneViewLeft: ARSCNView!
   @IBOutlet weak var sceneViewRight: ARSCNView!
   @IBOutlet weak var debugView: UIView!
+  @IBOutlet weak var selectedAxesView: UIStackView!
   @IBOutlet weak var gestureTableView: UITableView!
   
   @IBOutlet weak var predictionLabel: UILabel!
@@ -24,50 +27,102 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var initialObjectsClones = [SCNNode]()
   var indexFocusedObject = -1
   
-  //MARK: Transformations variables
-  var translationStep : Float = 0.3 // 0.3 meters
-  var rotationStep : CGFloat = 1 // 1 radian
-  var scaleStep : CGFloat = 1.10 // +10% scale
-  var negativeScaleStep : CGFloat = 0.9 // -10% scale
+    //MARK: UI variables
+  @IBOutlet weak var xHudSwitch: UISwitch!
+  @IBOutlet weak var yHudSwitch: UISwitch!
+  @IBOutlet weak var zHudSwitch: UISwitch!
+  @IBOutlet weak var transformTypeLabel: UILabel!
   
-  var isOxSelected = false
-  var isOySelected = false
-  var isOzSelected = false
+  var isGesturesHudVisible = true
+  var isAxesHudVisible = true {
+    didSet {
+      toggleUIVIew(for: selectedAxesView, isVisible: isAxesHudVisible)
+      
+        // TODO: move into a function
+      if isAxesHudVisible {
+        toggleUIVIew(for: gestureTableView, isVisible: false)
+      }
+      
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+        if self.isGesturesHudVisible {
+          self.toggleUIVIew(for: self.gestureTableView, isVisible: true)
+        }
+        
+        if self.isAxesHudVisible {
+          self.isAxesHudVisible = false
+        }
+      })
+    }
+  }
   
-  //MARK: Prediction variables
-  var model : Pose6AndBackground!
+    //MARK: Transformations variables
+  var translationStep : Float = 0.1 // 0.1 meters
+  var rotationStep : CGFloat = 0.1 // 0.1 radian => aprox 6 degree
+  var scaleStep : CGFloat = 1.05 // +5% scale
+  var negativeScaleStep : CGFloat = 0.95 // -5% scale
+  
+  var isOxSelected = false {
+    didSet {
+      toggleSwitch(for: xHudSwitch, isOn: isOxSelected)
+    }
+  }
+  var isOySelected = false {
+    didSet {
+      toggleSwitch(for: yHudSwitch, isOn: isOySelected)
+    }
+  }
+  var isOzSelected = false {
+    didSet {
+      toggleSwitch(for: zHudSwitch, isOn: isOzSelected)
+    }
+  }
+  
+  
+  
+    //MARK: Gesture prediction variables
+  var gestureModel : FullModelTest!
   let predictEvery = 3
   var frameCounter = -1
   
-  //MARK: Follow gesture variables
+  //MARK: Sound prediction variables
+  var soundModel : SnapDetector!
+  private let audioEngine: AVAudioEngine = AVAudioEngine()
+  private let inputBus: AVAudioNodeBus = AVAudioNodeBus(0)
+  private var inputFormat: AVAudioFormat!
+  private var streamAnalyzer: SNAudioStreamAnalyzer!
+  private let resultsObserver = SoundResultsObserver()
+  private let analysisQueue = DispatchQueue(label: "com.learnity.soundPrediction")
+
+  
+    //MARK: Follow gesture variables
   var isWaitingForGesture = true
   let predictGestureMovingEvery = 9
+  var predictGestureCounter = -1
   var previousFingerTipPosition = CGPoint(x: -1, y: -1)
-  var movingState = MovingState.nothing {
-    willSet{
-      handleChangeMovingState(newValue)
-    }
-  }
-  var movingTreshold = CGFloat(50)
+  var disableGestureDetectionTimer : Timer?
   
-  //MARK: Logic management
+    //MARK: Logic management
   let gestureManager = ControlManager.shared
   
-  //MARK: Scenes
+    //MARK: Scenes
   let shipScene = SCNScene(named: "art.scnassets/ship.scn")!
   let earthScene = SCNScene(named: "art.scnassets/earth.scn")!
   let geometryScene = SCNScene(named: "art.scnassets/geometry.scn")!
   var scenes = [SCNScene]()
   var indexCurrentScene = 0
   
-  //MARK:  DEBUG MODE VARIABLES
+    //MARK:  DEBUG MODE VARIABLES
   @IBOutlet weak var leftSceneContainer: UIView!
   @IBOutlet weak var segmentedControl: UISegmentedControl!
   @IBOutlet weak var xSwitch: UISwitch!
   @IBOutlet weak var ySwitch: UISwitch!
   @IBOutlet weak var zSwitch: UISwitch!
   let isDebug = false
-  var selectedTransformationType = GeometricTransformationTypes.translation
+  var selectedTransformationType = GeometricTransformationTypes.translation {
+    didSet {
+      transformTypeLabel.text = selectedTransformationType.toString()
+    }
+  }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -75,8 +130,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     gestureTableView.dataSource = self
     gestureManager.delegate = self
     
+    setupSoundPrediciton()
+    
     do {
-      model = try Pose6AndBackground(configuration: MLModelConfiguration())
+      gestureModel = try FullModelTest(configuration: MLModelConfiguration())
     } catch {
       fatalError("Cannot get CoreML model for gesture. Investigate please.")
     }
@@ -103,11 +160,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     
-    /// Create a session configuration
+      /// Create a session configuration
     let configuration = ARWorldTrackingConfiguration()
     configuration.frameSemantics.insert(.personSegmentationWithDepth)
     configuration.planeDetection = [.horizontal, .vertical]
     
+    sceneViewLeft.preferredFramesPerSecond = 30
+    sceneViewRight.preferredFramesPerSecond = 30
     sceneViewLeft.session.run(configuration)
     sceneViewRight.session = sceneViewLeft.session
   }
@@ -115,7 +174,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     
-    /// Pause the view's session
+      /// Pause the view's session
     sceneViewLeft.session.pause()
   }
   
@@ -156,14 +215,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       indexFocusedObject += 1
     }
     
-    //return object to its initial position
+      //return object to its initial position
     if prevIndexFocusedObject != -1 {
       let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
       currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
       translateAndRotateObjectAction(startObject: currentObjects[prevIndexFocusedObject], finalObject: initialObjectsClones[prevIndexFocusedObject], isReturningToInitialPosition: true)
     }
     
-    // TODO: add this line after merge in focusOnNextObject 
+      // TODO: add this line after merge in focusOnNextObject
     GesturesPresenter.shared.focusedObject = currentObjects[indexFocusedObject]
     
     moveObjectInFrontOfCamera()
@@ -186,6 +245,54 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       case .translation : translate(by: -0.3)
       case .rotation : rotate(by: -5)
       case .scale : scale(by: 0.75)
+    }
+  }
+  
+  func toggleUIVIew(for hud: UIView, isVisible: Bool) {
+    UIView.animate(withDuration: 0.4) {
+      hud.alpha = isVisible ? 1.0 : 0.0
+    }
+  }
+  
+  func toggleSwitch(for switchControl: UISwitch, isOn: Bool) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+      switchControl.setOn(isOn, animated: true)
+    })
+  }
+  
+  func setupSoundPrediciton() {
+    resultsObserver.delegate = self
+    inputFormat = audioEngine.inputNode.inputFormat(forBus: inputBus)
+    
+    do {
+      soundModel = try SnapDetector(configuration: MLModelConfiguration())
+    } catch {
+      fatalError("Cannot get CoreML model for sound. Investigate please.")
+    }
+    
+    do {
+      try audioEngine.start()
+      audioEngine.inputNode.installTap(onBus: inputBus,
+                                       bufferSize: 8192,
+                                       format: inputFormat, block: analyzeAudio(buffer:at:))
+      
+      streamAnalyzer = SNAudioStreamAnalyzer(format: inputFormat)
+      
+      let request = try SNClassifySoundRequest(mlModel: soundModel.model)
+      
+      try streamAnalyzer.add(request,
+                             withObserver: resultsObserver)
+      
+      
+    } catch {
+      print("Unable to start AVAudioEngine: \(error.localizedDescription)")
+    }
+  }
+  
+  func analyzeAudio(buffer: AVAudioBuffer, at time: AVAudioTime) {
+    analysisQueue.async {
+      self.streamAnalyzer.analyze(buffer,
+                                  atAudioFramePosition: time.sampleTime)
     }
   }
   
@@ -229,12 +336,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
   func translateAndRotateObjectAction(startObject: SCNNode, finalObject: SCNNode, isReturningToInitialPosition: Bool) {
-    //calculate final rotation
+      //calculate final rotation
     let finalObjRotation = finalObject.rotation
     let rotateAction = SCNAction.rotate(toAxisAngle: finalObjRotation,
                                         duration: 1)
     
-    //calculate final position
+      //calculate final position
     let finalObjTransform = finalObject.transform
     let finalObjOrientation = SCNVector3(-finalObjTransform.m31, -finalObjTransform.m32, -finalObjTransform.m33)
     let finalObjLocation = SCNVector3(finalObjTransform.m41, finalObjTransform.m42, finalObjTransform.m43)
@@ -249,9 +356,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   func rotate(by step: CGFloat){
     if indexFocusedObject != -1 {
       let rotateAction = SCNAction.rotate(by: step,
-                                          around: SCNVector3(xSwitch.isOn ? 1 : 0,
-                                                             ySwitch.isOn ? 1 : 0,
-                                                             zSwitch.isOn ? 1 : 0),
+                                          around: SCNVector3(isOxSelected ? 1 : 0,
+                                                             isOySelected ? 1 : 0,
+                                                             isOzSelected ? 1 : 0),
                                           duration: 0.3)
       currentObjects[indexFocusedObject].runAction(rotateAction)
     }
@@ -266,9 +373,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   func translate(by step: Float) {
     if indexFocusedObject != -1 {
-      let translateAction = SCNAction.move(by: SCNVector3(xSwitch.isOn ? step: 0,
-                                                          ySwitch.isOn ? step : 0,
-                                                          zSwitch.isOn ? step : 0), duration: 2)
+      let translateAction = SCNAction.move(by: SCNVector3(isOxSelected ? step: 0,
+                                                          isOySelected ? step : 0,
+                                                          isOzSelected ? step : 0), duration: 2)
       currentObjects[indexFocusedObject].runAction(translateAction)
     }
   }
@@ -281,27 +388,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   func updateFrame() {
   }
-  // MARK: - ARSCNViewDelegate
+    // MARK: - ARSCNViewDelegate
   
   func session(_ session: ARSession, didFailWithError error: Error) {
-    /// Present an error message to the user
+      /// Present an error message to the user
     
   }
   
   func sessionWasInterrupted(_ session: ARSession) {
-    /// Inform the user that the session has been interrupted, for example, by presenting an overlay
+      /// Inform the user that the session has been interrupted, for example, by presenting an overlay
     
   }
   
   func sessionInterruptionEnded(_ session: ARSession) {
-    /// Reset tracking and/or remove existing anchors if consistent tracking is required
+      /// Reset tracking and/or remove existing anchors if consistent tracking is required
     
   }
 }
 
 extension ViewController: ARSessionDelegate{
   func session(_ session: ARSession, didUpdate frame: ARFrame) {
-    if !isWaitingForGesture { return }
     
     frameCounter += 1
     
@@ -318,28 +424,25 @@ extension ViewController: ARSessionDelegate{
     }
     
     guard let handPoses = handPoseReques.results, !handPoses.isEmpty else {
-      //Aici intra cand nu este mana in cadru
+        //Aici intra cand nu este mana in cadru
       return
     }
     let handObservation = handPoses.first
     if frameCounter % predictEvery == 0 {
       guard let keypointsMultiArray = try? handObservation?.keypointsMultiArray() else { fatalError()}
       do {
-        let handPosePrediction = try model.prediction(poses: keypointsMultiArray)
+        checkMoving(handObservation)
+        let handPosePrediction = try gestureModel.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
-        if confidence > 0.5 {
-          updatePredictionLabels(with: "\(handPosePrediction.label) \(confidence)")
+        if isWaitingForGesture && confidence > 0.5 {
           gestureManager.setGestureType(handPosePrediction.label)
         } else {
-          // TODO: check if we actually need this state update
-//          gestureManager.setGestureType(GestureType.nothing.rawValue)
+            // TODO: check if we actually need this state update
+            //          gestureManager.setGestureType(GestureType.nothing.rawValue)
         }
       }catch{
         print("Prediction error: \(error)")
       }
-      
-      ///monitoring Finger Index TIP position on screen (up/down only)
-      //checkMoving(handObservation)
     }
   }
   
@@ -348,79 +451,64 @@ extension ViewController: ARSessionDelegate{
       return
     }
     
-    if frameCounter % predictGestureMovingEvery == 0 {
-      let landmarkConfidenceTreshold : Float = 0.2
-      let indexFingerName = VNHumanHandPoseObservation.JointName.indexTip
+    let landmarkConfidenceTreshold : Float = 0.2
+    let fingerMovingThreshold : CGFloat = 0.05
+    let indexFingerName = VNHumanHandPoseObservation.JointName.indexTip
+    
+    if let indexFingerPoint = try? handObservation.recognizedPoint(indexFingerName),
+       indexFingerPoint.confidence > landmarkConfidenceTreshold {
+      let normalizedLocation = indexFingerPoint.location
+      let absXdiff = abs(previousFingerTipPosition.x - normalizedLocation.x)
+      let absYdiff = abs(previousFingerTipPosition.y - normalizedLocation.y)
+      let movingDelta = max(absXdiff, absYdiff)
       
-      let width = sceneViewLeft.currentViewport.width
-      let height = sceneViewLeft.currentViewport.height
-      
-      var indexFingerTipLocation : CGPoint?
-      
-      if let indexFingerPoint = try? handObservation.recognizedPoint(indexFingerName),
-         indexFingerPoint.confidence > landmarkConfidenceTreshold {
-        let normalizedLocation = indexFingerPoint.location
-        indexFingerTipLocation = CGPoint(x: normalizedLocation.x * width, y: normalizedLocation.y * height)
-        
-        if isPreviousFingerTipPositionNotSet() {
-          previousFingerTipPosition = indexFingerTipLocation!
-        } else {
-          let delta = previousFingerTipPosition.y - indexFingerTipLocation!.y
-          if abs(delta) >= movingTreshold{
-            movingState = delta > 0 ? .up : .down
-            previousFingerTipPosition = indexFingerTipLocation!
-          } else {
-            movingState = .nothing
-          }
-        }
-      } else {
-        indexFingerTipLocation = nil
-        previousFingerTipPosition = CGPoint(x: -1, y: -1)
+      if movingDelta >= fingerMovingThreshold{
+        disableGestureRecognition(for: 0.5)
       }
+  
+      previousFingerTipPosition = normalizedLocation
+    }
+    else {
+      previousFingerTipPosition = CGPoint(x: -1, y: -1)
     }
   }
   
-  private func isPreviousFingerTipPositionNotSet() -> Bool {
-    return previousFingerTipPosition.x == -1
-  }
-  
-  private func handleChangeMovingState(_ newValue : MovingState){
-    switch newValue {
-    case .up:
-        rotate(by: 0.25)
-    case .down:
-        rotate(by: -0.25)
-    case .nothing:
-      if !currentObjects.isEmpty && indexFocusedObject >= 0 {
-        currentObjects[indexFocusedObject].removeAllActions()
-      }
-    }
-  }
-  
-  func updatePredictionLabels(with message: String){
-    let predictionAndMoving = message + " -> MoveState =\(movingState)"
-    predictionLabel.text = predictionAndMoving
-    predictionLabel2.text = predictionAndMoving
+  private func isFingerTipPositionNotSet(_ tip: CGPoint) -> Bool {
+    return tip.x == -1
   }
 }
 
 extension ViewController : GestureRecognitionDelegate {
-  func disableGestureRecognitionForShort(){
+  func disableGestureRecognition(for seconds : Double){
     isWaitingForGesture = false
-    DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: {
+    disableGestureDetectionTimer?.invalidate()
+    disableGestureDetectionTimer = nil
+    disableGestureDetectionTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false){
+      _ in
       self.isWaitingForGesture = true
-    })
+    }
   }
   
   func focusOnNextObject() {
     let prevIndexFocusedObject = indexFocusedObject
-    if indexFocusedObject < 0 || indexFocusedObject >= currentObjects.count - 1 {
+    
+    let isLeft = gestureManager.gestureType == .swipeLeft
+    if indexFocusedObject >= currentObjects.count - 1 && !isLeft {
       indexFocusedObject = 0
+    }else if indexFocusedObject == 0 && isLeft {
+      indexFocusedObject = currentObjects.count - 1
+    } else if isLeft {
+      indexFocusedObject -= 1
     } else {
       indexFocusedObject += 1
     }
+//    if indexFocusedObject < 0 || indexFocusedObject >= currentObjects.count - 1 {
+//      indexFocusedObject = 0
+//    } else {
+//      indexFocusedObject += 1
+//    }
     
-    //return object to its initial position
+      //return object to its initial position
     if prevIndexFocusedObject != -1 {
       let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
       currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
@@ -465,7 +553,7 @@ extension ViewController : GestureRecognitionDelegate {
   }
   
   func unfocus() {
-    //return object to its initial position
+      //return object to its initial position
     if indexFocusedObject != -1 {
       let initialScaleValue = CGFloat(initialObjectsClones[indexFocusedObject].scale.x)
       currentObjects[indexFocusedObject].runAction(SCNAction.scale(to: initialScaleValue, duration: 2))
@@ -476,9 +564,14 @@ extension ViewController : GestureRecognitionDelegate {
   }
   
   func loadNextScene() {
-    if indexCurrentScene > scenes.count - 1 {
+    let isLeft = gestureManager.gestureType == .swipeLeft
+    if indexCurrentScene >= scenes.count - 1 && !isLeft {
       indexCurrentScene = 0
-    }else{
+    }else if indexCurrentScene == 0 && isLeft {
+      indexCurrentScene = scenes.count - 1
+    } else if isLeft {
+      indexCurrentScene -= 1
+    } else {
       indexCurrentScene += 1
     }
     resetSceneInitialData()
@@ -489,7 +582,17 @@ extension ViewController : GestureRecognitionDelegate {
   }
   
   func removeUpperLayer() {
-    //daca este layered sa se faca ceva
+//    let isLeft = gestureManager.gestureType == .swipeLeft
+//    if indexCurrentScene > scenes.count - 1 && !isLeft {
+//      indexCurrentScene = 0
+//    }else if indexCurrentScene == 0 && isLeft {
+//      indexCurrentScene = scenes.count - 1
+//    } else if isLeft {
+//      indexCurrentScene -= 1
+//    } else {
+//      indexCurrentScene += 1
+//    }
+      //daca este layered sa se faca ceva
   }
 }
 
@@ -502,15 +605,27 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource{
     let cell = tableView.dequeueReusableCell(withIdentifier: "gestureInfo", for: indexPath) as! GestureInfoCell
     let currentGest = GesturesPresenter.shared.gesturesList[indexPath.row]
     
-    cell.setGesture(gesture: currentGest)
+    cell.setGesture(gesture: currentGest, index: indexPath.row)
     return cell
   }
-  
-  
+}
+
+extension ViewController: SoundRecognitionDelegate {
+  func snapDetected() {
+    resultsObserver.isWaitingForSnap = false
+    DispatchQueue.main.sync {
+      self.isGesturesHudVisible = !self.isGesturesHudVisible
+      self.toggleUIVIew(for: self.gestureTableView, isVisible: self.isGesturesHudVisible)
+    }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+      self.resultsObserver.isWaitingForSnap = true
+    })
+  }
 }
 
 protocol GestureRecognitionDelegate{
-  func disableGestureRecognitionForShort()
+  func disableGestureRecognition(for seconds: Double)
   func focusOnNextObject()
   func saveChanges()
   func discardChanges()
@@ -519,5 +634,9 @@ protocol GestureRecognitionDelegate{
   func unfocus()
   func loadNextScene()
   func removeUpperLayer()
+}
+
+protocol SoundRecognitionDelegate {
+  func snapDetected()
 }
 
