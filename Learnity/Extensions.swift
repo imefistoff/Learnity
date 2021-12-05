@@ -1,10 +1,3 @@
-//
-//  Extensions.swift
-//  Learnity
-//
-//  Created by Madalina on 14.11.2021.
-//
-
 import Foundation
 import SceneKit
 
@@ -16,9 +9,27 @@ extension SCNNode {
     }
   }
   
-  var isLayered : Bool {
+  var hasLayeredSubnode : Bool {
     get {
-      return self.name?.contains("layered") ?? false
+      var hasLayeredSubnode = false
+      self.childNodes.forEach { subNode in
+        if subNode.name != nil && subNode.name!.contains("layered") {
+          hasLayeredSubnode = true
+        }
+      }
+      return hasLayeredSubnode
+    }
+  }
+  
+  var getLayeredSubNode : SCNNode? {
+    get {
+      var layeredSubnode : SCNNode? = nil
+      self.childNodes.forEach { subNode in
+        if subNode.name != nil && subNode.name!.contains("layered") {
+          layeredSubnode = subNode
+        }
+      }
+      return layeredSubnode
     }
   }
   

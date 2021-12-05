@@ -1,10 +1,3 @@
-//
-//  Enums.swift
-//  Learnity
-//
-//  Created by Madalina on 14.11.2021.
-//
-
 import Foundation
 import CoreText
 import UIKit
@@ -57,3 +50,10 @@ enum FlowState: String {
   case action
   case notes
 }
+
+enum LayerPresenterCase {
+  case first
+  case last
+  case other
+}
+

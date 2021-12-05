@@ -1,10 +1,3 @@
-//
-//  GestureInfoCell.swift
-//  Learnity
-//
-//  Created by Madalina on 27.11.2021.
-//
-
 import UIKit
 
 class GestureInfoCell: UITableViewCell {

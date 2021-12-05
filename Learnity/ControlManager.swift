@@ -1,10 +1,3 @@
-//
-//  GestureManager.swift
-//  Learnity
-//
-//  Created by Maxim Sargarovschi on 23.11.2021.
-//
-
 import Foundation
 import UIKit
 
@@ -20,9 +13,6 @@ class ControlManager {
   var previousFlowState : FlowState = .view
   var flowState : FlowState = .view {
     didSet{
-      if oldValue == .view && flowState == .focus {
-        delegate?.stopAnimationForScene()
-      }
       previousFlowState = oldValue
       GesturesPresenter.shared.setGesturesList(for: flowState)
       delegate?.gestureTableView.reloadData()
@@ -193,7 +183,7 @@ class ControlManager {
       case .focus:
         delegate?.focusOnNextObject()
       case .edit:
-        delegate?.removeUpperLayer()
+        handleLayeredSwipe()
       case .action:
         print("do nothing")
       case .notes:
@@ -209,6 +199,17 @@ class ControlManager {
     if flowState == .action {
       //Terminate current actioning mode (translate/rotate/scale)
       flowState = .edit
+    }
+  }
+  
+  private func handleLayeredSwipe(){
+    switch gestureType {
+      case .swipeRight:
+        delegate?.revertRemovedLayer()
+      case .swipeLeft:
+        delegate?.removeUpperLayer()
+      default:
+        break
     }
   }
 }

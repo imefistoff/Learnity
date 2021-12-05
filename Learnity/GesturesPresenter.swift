@@ -1,10 +1,3 @@
-  //
-  //  GesturesPresenter.swift
-  //  Learnity
-  //
-  //  Created by Madalina on 29.11.2021.
-  //
-
 import Foundation
 import SceneKit
 
@@ -13,7 +6,11 @@ class GesturesPresenter {
   private init() {}
   
   var gesturesList : [GestureData] = []
-  var focusedObject : SCNNode!
+  var focusedObject : SCNNode! {
+    didSet{
+      ControlManager.shared.delegate?.prepareLayeredNode()
+    }
+  }
   
   func setGesturesList(for flowState: FlowState) {
     switch flowState {
@@ -38,9 +35,8 @@ class GesturesPresenter {
           GestureData(gesture: GestureType.thumbUp, label: "Save changes"),
           GestureData(gesture: GestureType.thumbDown, label: "Discard changes")
         ]
-        if focusedObject.isLayered {
-          gesturesList.insert(contentsOf: [GestureData(gesture: GestureType.swipeLeft, label: "Remove layer"),
-                                           GestureData(gesture: GestureType.swipeRight, label: "Revert layer")], at: 3)
+        if focusedObject.hasLayeredSubnode {
+          gesturesList.insert(GestureData(gesture: GestureType.swipeLeft, label: "Remove layer"), at: 3)
         }
       case .action:
         gesturesList = [
@@ -60,5 +56,29 @@ class GesturesPresenter {
           GestureData(gesture: GestureType.thumbDown, label: "Discard changes"),
         ]
     }
+  }
+  
+  func updateGestureList(layerCase: LayerPresenterCase){
+    guard let delegate = ControlManager.shared.delegate else { return }
+    gesturesList = [
+      GestureData(gesture: GestureType.one, label: "Translate"),
+      GestureData(gesture: GestureType.two, label: "Rotate"),
+      GestureData(gesture: GestureType.three, label: "Scale"),
+      GestureData(gesture: GestureType.swipeLeft, label: "Remove layer"),
+      GestureData(gesture: GestureType.swipeRight, label: "Revert layer"),
+      GestureData(gesture: GestureType.thumbUp, label: "Save changes"),
+      GestureData(gesture: GestureType.thumbDown, label: "Discard changes")
+    ]
+    
+    switch layerCase {
+      case .first:
+        gesturesList.remove(at: 4)
+      case .last:
+        gesturesList.remove(at: 3)
+      case .other:
+        break
+    }
+    
+    delegate.gestureTableView.reloadData()
   }
 }

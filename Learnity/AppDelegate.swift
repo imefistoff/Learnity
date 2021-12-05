@@ -1,10 +1,3 @@
-//
-//  AppDelegate.swift
-//  Learnity
-//
-//  Created by Maxim Sargarovschi on 25.10.2021.
-//
-
 import UIKit
 
 @main

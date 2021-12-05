@@ -1,10 +1,3 @@
-//
-//  SoundResultsObserver.swift
-//  Learnity
-//
-//  Created by Madalina on 01.12.2021.
-//
-
 import Foundation
 import SoundAnalysis
 

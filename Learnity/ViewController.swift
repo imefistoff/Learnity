@@ -1,10 +1,3 @@
-  //
-  //  ViewController.swift
-  //  Learnity
-  //
-  //  Created by Maxim Sargarovschi on 25.10.2021.
-  //
-
 import UIKit
 import SceneKit
 import ARKit
@@ -26,6 +19,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var currentObjects = [SCNNode]()
   var initialObjectsClones = [SCNNode]()
   var indexFocusedObject = -1
+  var layeredObject : SCNNode?
+  var layers = [SCNNode]()
   
     //MARK: UI variables
   @IBOutlet weak var xHudSwitch: UISwitch!
@@ -37,7 +32,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var isAxesHudVisible = true {
     didSet {
       toggleUIVIew(for: selectedAxesView, isVisible: isAxesHudVisible)
-      
         // TODO: move into a function
       if isAxesHudVisible {
         toggleUIVIew(for: gestureTableView, isVisible: false)
@@ -477,6 +471,22 @@ extension ViewController: ARSessionDelegate{
   private func isFingerTipPositionNotSet(_ tip: CGPoint) -> Bool {
     return tip.x == -1
   }
+  
+  func expandLayersAnimation() {
+    for index in layers.indices {
+      if index == 0 { continue }
+      let layer = layers[index]
+      layer.runAction(SCNAction.move(by: SCNVector3(0,0,1 - (Float(index) * 0.1)) * 100 * Float(index), duration: 2))
+    }
+  }
+  
+  func unionLayersAnimation() {
+    for index in layers.indices {
+      if index == 0 { continue }
+      let layer = layers[index]
+      layer.runAction(SCNAction.move(by: SCNVector3(0,0,1 - (Float(index) * 0.1)) * 100 * Float(index) * -1, duration: 2))
+    }
+  }
 }
 
 extension ViewController : GestureRecognitionDelegate {
@@ -503,11 +513,6 @@ extension ViewController : GestureRecognitionDelegate {
     } else {
       indexFocusedObject += 1
     }
-//    if indexFocusedObject < 0 || indexFocusedObject >= currentObjects.count - 1 {
-//      indexFocusedObject = 0
-//    } else {
-//      indexFocusedObject += 1
-//    }
     
       //return object to its initial position
     if prevIndexFocusedObject != -1 {
@@ -583,28 +588,76 @@ extension ViewController : GestureRecognitionDelegate {
   }
   
   func removeUpperLayer() {
-//    let isLeft = gestureManager.gestureType == .swipeLeft
-//    if indexCurrentScene > scenes.count - 1 && !isLeft {
-//      indexCurrentScene = 0
-//    }else if indexCurrentScene == 0 && isLeft {
-//      indexCurrentScene = scenes.count - 1
-//    } else if isLeft {
-//      indexCurrentScene -= 1
-//    } else {
-//      indexCurrentScene += 1
-//    }
-      //daca este layered sa se faca ceva
-  }
-  
-  func stopAnimationForScene() {
-    currentObjects.forEach { node in
-      node.animationPlayer(forKey: "transform")?.paused = true
+    var layerCase = LayerPresenterCase.other
+    let externalLayerTransparency = currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency
+    if externalLayerTransparency == 1 {
+      disableGestureRecognition(for: 3)
+      expandLayersAnimation()
+      self.currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency = 0
+    } else {
+      let nextLayerForRemove = layers.first(where: { node in
+        if layers.last! == node {
+          layerCase = .last
+          return false
+        }
+        return !node.isHidden
+      })
+      if let nextLayerForRemove = nextLayerForRemove {
+        nextLayerForRemove.isHidden = true
+        if layers[layers.count - 2].isHidden {
+          layerCase = .last
+        }
+      }
     }
+    GesturesPresenter.shared.updateGestureList(layerCase: layerCase)
   }
   
-  func playAnimationForScene() {
-    currentObjects.forEach { node in
-      node.animationPlayer(forKey: "transform")?.paused = false
+  func revertRemovedLayer() {
+    var layerCase = LayerPresenterCase.other
+    let externalLayerTransparency = currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency
+    let nextLayerForRemove = layers.reversed().first { node in
+      return node.isHidden
+    }
+    if let nextLayerForRemove = nextLayerForRemove {
+      nextLayerForRemove.isHidden = false
+    }else if externalLayerTransparency == 0{
+      disableGestureRecognition(for: 3)
+      unionLayersAnimation()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+        self.currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency = 1
+      }
+      layerCase = .first
+    }
+    GesturesPresenter.shared.updateGestureList(layerCase: layerCase)
+
+  }
+  
+  func prepareLayeredNode(){
+    layeredObject = currentObjects[indexFocusedObject].getLayeredSubNode
+    
+    if let finalObjTransform = sceneViewLeft.pointOfView?.transform, let layeredObject = layeredObject {
+      let finalObjOrientation = SCNVector3(-finalObjTransform.m31, -finalObjTransform.m32, -finalObjTransform.m33)
+      let finalObjLocation = SCNVector3(layeredObject.transform.m41, layeredObject.transform.m42, layeredObject.transform.m43)
+      let finalObjPosition = finalObjOrientation + finalObjLocation
+      layeredObject.position = finalObjPosition
+    }
+    
+    layeredObject?.eulerAngles = SCNVector3Make(0, Float(Double.pi)/2, 0);
+    
+    
+    guard let layeredObject = layeredObject else {
+      print("Can't find layered object.")
+      return
+    }
+    
+    layers = layeredObject.childNodes(passingTest: { node, _ in
+      return node.name != nil && node.name!.contains("slice$")
+    })
+    
+    layers.sort { leftNode, rightNode in
+      let leftNodeOrderInt = Int(leftNode.name!.split(separator: "$")[1])
+      let rightNodeOrderInt = Int(rightNode.name!.split(separator: "$")[1])
+      return  leftNodeOrderInt! < rightNodeOrderInt!
     }
   }
 }
@@ -647,7 +700,7 @@ protocol GestureRecognitionDelegate{
   func unfocus()
   func loadNextScene()
   func removeUpperLayer()
-  func stopAnimationForScene()
+  func prepareLayeredNode()
 }
 
 protocol SoundRecognitionDelegate {

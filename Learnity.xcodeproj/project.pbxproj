@@ -17,7 +17,6 @@
 		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
 		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
-		AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = AED058862745400100AB4D9E /* SimpleParticle.sks */; };
 		E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B20532752A51800D6B53E /* GestureInfoCell.swift */; };
 		E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205527554A8300D6B53E /* GesturesPresenter.swift */; };
 		E32B205827554AAF00D6B53E /* GestureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205727554AAF00D6B53E /* GestureData.swift */; };
@@ -39,7 +38,6 @@
 		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
-		AED058862745400100AB4D9E /* SimpleParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SimpleParticle.sks; sourceTree = "<group>"; };
 		C5B74856FEEBBCB8DBB71FF6 /* Pods_Learnity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Learnity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C0CDE520158184F00659CC /* Pods-Learnity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Learnity.release.xcconfig"; path = "Target Support Files/Pods-Learnity/Pods-Learnity.release.xcconfig"; sourceTree = "<group>"; };
 		E32B20532752A51800D6B53E /* GestureInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureInfoCell.swift; sourceTree = "<group>"; };
@@ -93,7 +91,6 @@
 				AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */,
 				AEA6B124274287700002FC20 /* Extensions.swift */,
 				AEA6B126274287B20002FC20 /* Enums.swift */,
-				AED058862745400100AB4D9E /* SimpleParticle.sks */,
 				AECC15ED274CD8B900B23895 /* ControlManager.swift */,
 				E32B205527554A8300D6B53E /* GesturesPresenter.swift */,
 				E32B205727554AAF00D6B53E /* GestureData.swift */,
@@ -193,7 +190,6 @@
 				AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */,
 				AE00737E27272EBF00CC11C2 /* Assets.xcassets in Resources */,
 				AE00737C27272EBE00CC11C2 /* Main.storyboard in Resources */,
-				AED058872745400100AB4D9E /* SimpleParticle.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
