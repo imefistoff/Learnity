@@ -102,6 +102,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   let geometryScene = SCNScene(named: "art.scnassets/geometry.scn")!
   var scenes = [SCNScene]()
   var indexCurrentScene = 0
+  var explodeObject : SCNNode?
+  var centerPointOfObjects : SCNVector3?
   
     //MARK:  DEBUG MODE VARIABLES
   @IBOutlet weak var leftSceneContainer: UIView!
@@ -144,6 +146,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     let mainScene = SCNScene(named: "art.scnassets/main.scn")!
     sceneViewLeft.scene = mainScene
     sceneViewRight.scene = mainScene
+    
+    explodeObject = sceneViewLeft.scene.rootNode.childNode(withName: "Explode_object", recursively: false)
+    if let explodeObject = explodeObject {
+      explodeObject.centerPivot()
+    }
     
     collectAllObjects(from: getNextScene())
     insertNewObjectsIntoScene()
@@ -291,11 +298,52 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   func insertNewObjectsIntoScene(){
     for node in currentObjects {
       sceneViewLeft.scene.rootNode.addChildNode(node)
+      node.scale = SCNVector3(0,0,0)
     }
+    centerPointOfObjects = calculateMidPointOfObjects()
+    disableGestureRecognition(for: 3.1)
+    //explosion animation
+    // TODO:
+    if let explodeObject = explodeObject,
+      let centerPointOfObjects = centerPointOfObjects {
+      explodeObject.position = centerPointOfObjects
+      explodeObject.isHidden = false
+      explodeObject.enumerateChildNodes { subnode, _ in
+        subnode.animationPlayer(forKey: "transform")?.play()
+      }
+      
+      DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        explodeObject.isHidden = true
+        explodeObject.enumerateChildNodes { subnode, _ in
+          subnode.animationPlayer(forKey: "transform")?.stop()
+        }
+      }
+    }
+    
+    
+    //animate growing objects
+    for objIndex in currentObjects.indices {
+      let object = currentObjects[objIndex]
+      //let initialScaleValue = initialObjectsClones[objIndex].scale
+      let scaleValue = initialObjectsClones[objIndex].scale.x
+      let growingAction = SCNAction.scale(to: CGFloat(scaleValue), duration: 3)
+      object.runAction(growingAction)
+    }
+  }
+  
+  func calculateMidPointOfObjects() -> SCNVector3{
+    var midPoint = SCNVector3(0.0, 0.0, 0.0)
+    
+    for object in currentObjects {
+      midPoint += object.position
+    }
+    
+    return midPoint / Float(currentObjects.count)
   }
   
   func removeOldObjectsFromScene(){
     for object in sceneViewLeft.scene.rootNode.childNodes {
+      if object.name == "Explode_object" { continue }
       object.removeFromParentNode()
     }
   }

@@ -17,6 +17,7 @@
 		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
 		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
+		AEEE3E48275E1D4400C85020 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEEE3E46275E1D4400C85020 /* Assets.xcassets */; };
 		E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B20532752A51800D6B53E /* GestureInfoCell.swift */; };
 		E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205527554A8300D6B53E /* GesturesPresenter.swift */; };
 		E32B205827554AAF00D6B53E /* GestureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205727554AAF00D6B53E /* GestureData.swift */; };
@@ -38,6 +39,7 @@
 		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
+		AEEE3E46275E1D4400C85020 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5B74856FEEBBCB8DBB71FF6 /* Pods_Learnity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Learnity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1C0CDE520158184F00659CC /* Pods-Learnity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Learnity.release.xcconfig"; path = "Target Support Files/Pods-Learnity/Pods-Learnity.release.xcconfig"; sourceTree = "<group>"; };
 		E32B20532752A51800D6B53E /* GestureInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureInfoCell.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 		AE00736827272EBE00CC11C2 = {
 			isa = PBXGroup;
 			children = (
+				AEEE3E46275E1D4400C85020 /* Assets.xcassets */,
 				AE00737327272EBE00CC11C2 /* Learnity */,
 				AE00737227272EBE00CC11C2 /* Products */,
 				BDD95CD22F8EC1E5FD190B66 /* Pods */,
@@ -189,6 +192,7 @@
 				AE00737727272EBE00CC11C2 /* art.scnassets in Resources */,
 				AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */,
 				AE00737E27272EBF00CC11C2 /* Assets.xcassets in Resources */,
+				AEEE3E48275E1D4400C85020 /* Assets.xcassets in Resources */,
 				AE00737C27272EBE00CC11C2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -386,7 +390,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XM2N9K924S;
+				DEVELOPMENT_TEAM = 6M6FEN2D93;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
@@ -403,7 +407,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mefist.personal.Learnity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mefistoff.personal.Learnity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -419,7 +423,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XM2N9K924S;
+				DEVELOPMENT_TEAM = 6M6FEN2D93;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
@@ -436,7 +440,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mefist.personal.Learnity;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mefistoff.personal.Learnity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
