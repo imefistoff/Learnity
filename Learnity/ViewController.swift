@@ -109,6 +109,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   var whiteboardHeight : Float = 0
   var centerPointOfObjects : SCNVector3?
   
+  //MARK: Drawing stuff
+  @IBOutlet var drawingViews: [UIView]!
+  private let drawLeftOverlay = CAShapeLayer()
+  private let drawRightOverlay = CAShapeLayer()
+  private var drawPath = UIBezierPath()
+  private var savedDrawPath = UIBezierPath().cgPath
+  private var isFirstSegmentPath = true
+  private var lastDrawPoint: CGPoint?
+  
     //MARK:  DEBUG MODE VARIABLES
   @IBOutlet weak var leftSceneContainer: UIView!
   @IBOutlet weak var segmentedControl: UISegmentedControl!
@@ -173,6 +182,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     collectAllObjects(from: getNextScene())
     insertNewObjectsIntoScene()
+    
+    setupDrawingSublayers()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -263,6 +274,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
       case .translation : translate(by: -0.3)
       case .rotation : rotate(by: -5)
       case .scale : scale(by: 0.75)
+    }
+  }
+  
+  func setupDrawingSublayers(){
+    drawLeftOverlay.frame = view.layer.bounds
+    drawLeftOverlay.lineWidth = 5
+    drawLeftOverlay.backgroundColor = #colorLiteral(red: 0.9999018312, green: 1, blue: 0.9998798966, alpha: 0.5).cgColor
+    drawLeftOverlay.strokeColor = #colorLiteral(red: 0.6, green: 0.1, blue: 0.3, alpha: 1).cgColor
+    drawLeftOverlay.fillColor = #colorLiteral(red: 0.9999018312, green: 1, blue: 0.9998798966, alpha: 0).cgColor
+    drawLeftOverlay.lineCap = .round
+    
+    drawRightOverlay.frame = view.layer.bounds
+    drawRightOverlay.lineWidth = 5
+    drawRightOverlay.backgroundColor = #colorLiteral(red: 0.9999018312, green: 1, blue: 0.9998798966, alpha: 0.5).cgColor
+    drawRightOverlay.strokeColor = #colorLiteral(red: 0.6, green: 0.1, blue: 0.3, alpha: 1).cgColor
+    drawRightOverlay.fillColor = #colorLiteral(red: 0.9999018312, green: 1, blue: 0.9998798966, alpha: 0).cgColor
+    drawRightOverlay.lineCap = .round
+    
+    drawingViews[0].layer.addSublayer(drawLeftOverlay)
+    drawingViews[1].layer.addSublayer(drawRightOverlay)
+    
+    drawingViews.forEach { view in
+      view.isHidden = true
     }
   }
   
@@ -495,11 +529,12 @@ extension ViewController: ARSessionDelegate{
         checkMoving(handObservation)
         let handPosePrediction = try gestureModel.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
-        if isWaitingForGesture && confidence > 0.5 {
+        print("\(handPosePrediction.label) with \(confidence)")
+        if isWaitingForGesture && confidence > 0.55 {
           gestureManager.setGestureType(handPosePrediction.label)
         } else {
             // TODO: check if we actually need this state update
-            //          gestureManager.setGestureType(GestureType.nothing.rawValue)
+           //gestureManager.setGestureType(GestureType.nothing.rawValue)
         }
       }catch{
         print("Prediction error: \(error)")
@@ -515,76 +550,81 @@ extension ViewController: ARSessionDelegate{
     let landmarkConfidenceTreshold : Float = 0.6
     let fingerMovingThreshold : CGFloat = 0.05
     let indexFingerName = VNHumanHandPoseObservation.JointName.indexTip
+    let thumbFingerName = VNHumanHandPoseObservation.JointName.thumbTip
     
     if let indexFingerPoint = try? handObservation.recognizedPoint(indexFingerName),
+       let thumbPoint = try? handObservation.recognizedPoint(thumbFingerName),
+       thumbPoint.confidence > landmarkConfidenceTreshold,
        indexFingerPoint.confidence > landmarkConfidenceTreshold {
-      let normalizedLocation = indexFingerPoint.location
+      let indexNormalizedLocation = indexFingerPoint.location
+      let thumbNormalizedLocation = thumbPoint.location
       
-      if gestureManager.flowState != .notes {
-//        let width = sceneViewLeft.currentViewport.width
-//        let height = sceneViewLeft.currentViewport.height
+      if gestureManager.flowState == .notes {
         
-        let fingerTipLocation = CGPoint(x: normalizedLocation.x, y: normalizedLocation.y)
-        draw(on: fingerTipLocation)
+        let width = sceneViewLeft.frame.width
+        let heigth = sceneViewLeft.frame.height
+        
+        let convertedIndex = CGPoint(x: indexNormalizedLocation.x * width, y: heigth - indexNormalizedLocation.y * heigth)
+        let convertedThumb = CGPoint(x: thumbNormalizedLocation.x * width, y: heigth - thumbNormalizedLocation.y * heigth)
+        
+        let distance = convertedIndex.distance(from: convertedThumb)
+        
+        let midPoint = CGPoint.midPoint(p1: convertedIndex, p2: convertedThumb)
+        if gestureManager.gestureType == .pinch && distance < 40{
+          draw(on: midPoint, isLastPoint: false)
+        }else{
+          draw(on: midPoint, isLastPoint: true)
+        }
+
       }
       
-      let absXdiff = abs(previousFingerTipPosition.x - normalizedLocation.x)
-      let absYdiff = abs(previousFingerTipPosition.y - normalizedLocation.y)
+      let absXdiff = abs(previousFingerTipPosition.x - indexNormalizedLocation.x)
+      let absYdiff = abs(previousFingerTipPosition.y - indexNormalizedLocation.y)
       let movingDelta = max(absXdiff, absYdiff)
       
       if movingDelta >= fingerMovingThreshold{
         disableGestureRecognition(for: 0.5)
       }
   
-      previousFingerTipPosition = normalizedLocation
+      previousFingerTipPosition = indexNormalizedLocation
     }
     else {
       previousFingerTipPosition = CGPoint(x: -1, y: -1)
     }
   }
   
-  func draw(on point: CGPoint){
-    let cube = createCubeNode()
-    
-    let currentX = point.x - 0.5
-    let currentY = point.y - 0.5
-    
-    let scaleValue : CGFloat = CGFloat(1 / whiteboardObject!.scale.x)
-    
-    var yCube = currentY * (CGFloat(whiteboardHeight) / 2) * scaleValue / 2
-    var zCube = currentX * (CGFloat(whiteboardLenght) / 2) * scaleValue / 2
-    
-    if yCube > CGFloat(whiteboardHeight) {
-      yCube = CGFloat(whiteboardHeight)
+  func draw(on point: CGPoint, isLastPoint: Bool){
+    if isLastPoint {
+      if let lastPoint = lastDrawPoint {
+          // Add a straight line from the last midpoint to the end of the stroke.
+        drawPath.addLine(to: lastPoint)
+      }
+        // We are done drawing, so reset the last draw point.
+      lastDrawPoint = nil
+    } else {
+      if lastDrawPoint == nil {
+          // This is the beginning of the stroke.
+        drawPath.move(to: point)
+        isFirstSegmentPath = true
+      } else {
+        let lastPoint = lastDrawPoint!
+          // Get the midpoint between the last draw point and the new point.
+        let midPoint = CGPoint.midPoint(p1: lastPoint, p2: point)
+        if isFirstSegmentPath {
+            // If it's the first segment of the stroke, draw a line to the midpoint.
+          drawPath.addLine(to: midPoint)
+          isFirstSegmentPath = false
+        } else {
+            // Otherwise, draw a curve to a midpoint using the last draw point as a control point.
+          drawPath.addQuadCurve(to: midPoint, controlPoint: lastPoint)
+        }
+      }
+        // Remember the last draw point for the next update pass.
+      lastDrawPoint = point
     }
     
-    if zCube > CGFloat(whiteboardLenght) {
-      zCube = CGFloat(whiteboardLenght)
-    }
-    
-    cube.position = SCNVector3(-0.1 , yCube, zCube)
-    
-    whiteboardWritablePart?.addChildNode(cube)
-  }
-  
-  private func createCubeNode() -> SCNNode {
-      // create the basic geometry of the box (sizes are in meters)
-    // (1 / whiteboardObject!.scale.x) -> scaling value equal to 1m
-    let whiteboardScale = (1 / whiteboardObject!.scale.x)
-    let cm2 = CGFloat(whiteboardScale / 50)
-    let radLong : CGFloat =  0.02// 2 cm
-    let boxGeometry = SCNSphere(radius: radLong)
-    
-      // give the box a material to make a little more realistic
-    let material = SCNMaterial()
-    material.diffuse.contents = UIColor.blue
-    material.specular.contents = UIColor(white: 0.6, alpha: 1.0)
-    
-      // create the node and give it the materials
-    let boxNode = SCNNode(geometry: boxGeometry)
-    boxNode.geometry?.materials = [material]
-    
-    return boxNode
+    drawLeftOverlay.path = drawPath.cgPath
+    drawRightOverlay.path = drawPath.cgPath
   }
   
   private func isFingerTipPositionNotSet(_ tip: CGPoint) -> Bool {
@@ -781,6 +821,51 @@ extension ViewController : GestureRecognitionDelegate {
       return  leftNodeOrderInt! < rightNodeOrderInt!
     }
   }
+  
+  func discardNoticeChanges() {
+    hideDrawingOverlay()
+    drawPath.cgPath = savedDrawPath
+  }
+  
+  func saveNoticeChanges() {
+    hideDrawingOverlay()
+    savedDrawPath = drawPath.cgPath
+    updateWhiteboard()
+  }
+  
+  func clearDrawingPath() {
+    drawPath = UIBezierPath()
+  }
+
+  
+  private func updateWhiteboard() {
+    drawingViews[0].isHidden = false
+    let image = drawingViews[0].asImage().resizableImage(withCapInsets: .zero, resizingMode: .stretch)
+    drawingViews[0].isHidden = true
+    let overlayPlane = whiteboardWritablePart!.getOverlayPlane
+    overlayPlane.geometry?.firstMaterial?.diffuse.contents = image.withHorizontallyFlippedOrientation()
+  }
+  
+  private func hideDrawingOverlay() {
+    drawingViews.forEach { view in
+      view.isHidden = true
+    }
+  }
+}
+
+protocol GestureRecognitionDelegate{
+  func disableGestureRecognition(for seconds: Double)
+  func focusOnNextObject()
+  func saveChanges()
+  func discardChanges()
+  func increaseTransformActionValue()
+  func decreaseTransformActionValue()
+  func unfocus()
+  func loadNextScene()
+  func removeUpperLayer()
+  func prepareLayeredNode()
+  func discardNoticeChanges()
+  func saveNoticeChanges()
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource{
@@ -809,19 +894,6 @@ extension ViewController: SoundRecognitionDelegate {
       self.resultsObserver.isWaitingForSnap = true
     })
   }
-}
-
-protocol GestureRecognitionDelegate{
-  func disableGestureRecognition(for seconds: Double)
-  func focusOnNextObject()
-  func saveChanges()
-  func discardChanges()
-  func increaseTransformActionValue()
-  func decreaseTransformActionValue()
-  func unfocus()
-  func loadNextScene()
-  func removeUpperLayer()
-  func prepareLayeredNode()
 }
 
 protocol SoundRecognitionDelegate {

@@ -44,6 +44,10 @@ extension SCNNode {
     return self.name != nil && self.name!.contains("permanent")
   }
   
+  var getOverlayPlane : SCNNode {
+    return self.childNode(withName: "Notes_overlay", recursively: false)!
+  }
+  
   func centerPivot() {
     var min = SCNVector3Zero
     var max = SCNVector3Zero
@@ -90,3 +94,21 @@ extension SCNVector3 {
   }
 }
 
+extension CGPoint {
+  static func midPoint(p1: CGPoint, p2: CGPoint) -> CGPoint {
+    return CGPoint(x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2)
+  }
+  
+  func distance(from point: CGPoint) -> CGFloat {
+    return hypot(point.x - x, point.y - y)
+  }
+}
+
+extension UIView {
+  func asImage() -> UIImage {
+    let renderer = UIGraphicsImageRenderer(bounds: bounds)
+    return renderer.image { rendererContext in
+      layer.render(in: rendererContext.cgContext)
+    }
+  }
+}

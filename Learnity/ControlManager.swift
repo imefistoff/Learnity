@@ -139,6 +139,7 @@ class ControlManager {
         delegate?.increaseTransformActionValue()
       case .notes:
         // TODO: Save changes
+        delegate?.saveNoticeChanges()
         flowState = previousFlowState
     }
   }
@@ -157,6 +158,7 @@ class ControlManager {
         delegate?.decreaseTransformActionValue()
       case .notes:
         // TODO: Discard changes
+        delegate?.discardNoticeChanges()
         flowState = previousFlowState
     }
   }
@@ -165,10 +167,12 @@ class ControlManager {
     switch flowState {
       case .view, .focus, .edit, .action:
         // Left out until implementation is done
-//        flowState = .notes
-        break
+        flowState = .notes
+        delegate?.drawingViews.forEach({ view in
+          view.isHidden = false
+        })
       case .notes:
-        print("drawing")
+        break
     }
   }
   
@@ -199,6 +203,9 @@ class ControlManager {
     if flowState == .action {
       //Terminate current actioning mode (translate/rotate/scale)
       flowState = .edit
+    }
+    if flowState == .notes {
+      delegate?.clearDrawingPath()
     }
   }
   

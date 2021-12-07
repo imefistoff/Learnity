@@ -24,7 +24,6 @@
 		E3384AB02757C6D000B3EF3B /* SnapDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */; };
 		E3384AB22757C76F00B3EF3B /* SoundResultsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */; };
 		E3384AB42757E62F00B3EF3B /* FullModelTest.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */; };
-		E374C13B27577EA100A5E52C /* HandPose.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E374C13A27577EA100A5E52C /* HandPose.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,7 +47,6 @@
 		E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SnapDetector.mlmodel; sourceTree = "<group>"; };
 		E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundResultsObserver.swift; sourceTree = "<group>"; };
 		E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FullModelTest.mlmodel; sourceTree = "<group>"; };
-		E374C13A27577EA100A5E52C /* HandPose.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = HandPose.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +105,6 @@
 			children = (
 				E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */,
 				E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */,
-				E374C13A27577EA100A5E52C /* HandPose.mlmodel */,
 				E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */,
 			);
 			path = ML;
@@ -235,7 +232,6 @@
 				AEA6B125274287700002FC20 /* Extensions.swift in Sources */,
 				AEA6B127274287B20002FC20 /* Enums.swift in Sources */,
 				E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */,
-				E374C13B27577EA100A5E52C /* HandPose.mlmodel in Sources */,
 				AE00737527272EBE00CC11C2 /* AppDelegate.swift in Sources */,
 				E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */,
 				AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */,
@@ -390,7 +386,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6M6FEN2D93;
+				DEVELOPMENT_TEAM = XM2N9K924S;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
@@ -423,7 +419,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6M6FEN2D93;
+				DEVELOPMENT_TEAM = XM2N9K924S;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App will use your micro for detecting some sounds.";
