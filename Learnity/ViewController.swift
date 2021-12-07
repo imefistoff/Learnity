@@ -97,12 +97,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   let gestureManager = ControlManager.shared
   
     //MARK: Scenes
-  let shipScene = SCNScene(named: "art.scnassets/ship.scn")!
+  let muscularScene = SCNScene(named: "art.scnassets/muscular_scene.scn")!
   let solarScene = SCNScene(named: "art.scnassets/solar_system.scn")!
   let geometryScene = SCNScene(named: "art.scnassets/geometry.scn")!
   var scenes = [SCNScene]()
   var indexCurrentScene = 0
   var explodeObject : SCNNode?
+  var whiteboardObject : SCNNode?
+  var whiteboardWritablePart : SCNNode?
+  var whiteboardLenght : Float = 0
+  var whiteboardHeight : Float = 0
   var centerPointOfObjects : SCNVector3?
   
     //MARK:  DEBUG MODE VARIABLES
@@ -134,7 +138,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     self.debugView.isHidden = !isDebug
     
-    scenes = [geometryScene, solarScene, shipScene]
+    scenes = [muscularScene, geometryScene, solarScene]
     
     UIApplication.shared.isIdleTimerDisabled = true
     
@@ -147,9 +151,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     sceneViewLeft.scene = mainScene
     sceneViewRight.scene = mainScene
     
-    explodeObject = sceneViewLeft.scene.rootNode.childNode(withName: "Explode_object", recursively: false)
+    explodeObject = sceneViewLeft.scene.rootNode.childNode(withName: "Explode_object_permanent", recursively: false)
     if let explodeObject = explodeObject {
       explodeObject.centerPivot()
+    }
+    
+    whiteboardObject = sceneViewLeft.scene.rootNode.childNode(withName: "Whiteboard_permanent", recursively: false)
+    if let whiteboard = whiteboardObject {
+      whiteboard.centerPivot()
+      let translationAction = SCNAction.move(to: SCNVector3(1.5, -0.9, -2), duration: 5)
+      whiteboard.runAction(translationAction)
+      whiteboardWritablePart = whiteboard.childNode(withName: "Whiteboard_writable", recursively: false)
+      
+      var min = SCNVector3Zero
+      var max = SCNVector3Zero
+      whiteboardWritablePart!.__getBoundingBoxMin(&min, max: &max)
+      
+      whiteboardLenght = max.z - min.z
+      whiteboardHeight = max.y - min.y
     }
     
     collectAllObjects(from: getNextScene())
@@ -303,7 +322,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     centerPointOfObjects = calculateMidPointOfObjects()
     disableGestureRecognition(for: 3.1)
     //explosion animation
-    // TODO:
     if let explodeObject = explodeObject,
       let centerPointOfObjects = centerPointOfObjects {
       explodeObject.position = centerPointOfObjects
@@ -343,7 +361,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   
   func removeOldObjectsFromScene(){
     for object in sceneViewLeft.scene.rootNode.childNodes {
-      if object.name == "Explode_object" { continue }
+      if object.isPermanent { continue }
       object.removeFromParentNode()
     }
   }
@@ -471,7 +489,7 @@ extension ViewController: ARSessionDelegate{
       return
     }
     let handObservation = handPoses.first
-    if frameCounter % predictEvery == 0 {
+    //if frameCounter % predictEvery == 0 {
       guard let keypointsMultiArray = try? handObservation?.keypointsMultiArray() else { fatalError()}
       do {
         checkMoving(handObservation)
@@ -486,7 +504,7 @@ extension ViewController: ARSessionDelegate{
       }catch{
         print("Prediction error: \(error)")
       }
-    }
+    //}
   }
   
   private func checkMoving(_ handObservation: VNHumanHandPoseObservation?) {
@@ -494,13 +512,22 @@ extension ViewController: ARSessionDelegate{
       return
     }
     
-    let landmarkConfidenceTreshold : Float = 0.2
+    let landmarkConfidenceTreshold : Float = 0.6
     let fingerMovingThreshold : CGFloat = 0.05
     let indexFingerName = VNHumanHandPoseObservation.JointName.indexTip
     
     if let indexFingerPoint = try? handObservation.recognizedPoint(indexFingerName),
        indexFingerPoint.confidence > landmarkConfidenceTreshold {
       let normalizedLocation = indexFingerPoint.location
+      
+      if gestureManager.flowState != .notes {
+//        let width = sceneViewLeft.currentViewport.width
+//        let height = sceneViewLeft.currentViewport.height
+        
+        let fingerTipLocation = CGPoint(x: normalizedLocation.x, y: normalizedLocation.y)
+        draw(on: fingerTipLocation)
+      }
+      
       let absXdiff = abs(previousFingerTipPosition.x - normalizedLocation.x)
       let absYdiff = abs(previousFingerTipPosition.y - normalizedLocation.y)
       let movingDelta = max(absXdiff, absYdiff)
@@ -514,6 +541,50 @@ extension ViewController: ARSessionDelegate{
     else {
       previousFingerTipPosition = CGPoint(x: -1, y: -1)
     }
+  }
+  
+  func draw(on point: CGPoint){
+    let cube = createCubeNode()
+    
+    let currentX = point.x - 0.5
+    let currentY = point.y - 0.5
+    
+    let scaleValue : CGFloat = CGFloat(1 / whiteboardObject!.scale.x)
+    
+    var yCube = currentY * (CGFloat(whiteboardHeight) / 2) * scaleValue / 2
+    var zCube = currentX * (CGFloat(whiteboardLenght) / 2) * scaleValue / 2
+    
+    if yCube > CGFloat(whiteboardHeight) {
+      yCube = CGFloat(whiteboardHeight)
+    }
+    
+    if zCube > CGFloat(whiteboardLenght) {
+      zCube = CGFloat(whiteboardLenght)
+    }
+    
+    cube.position = SCNVector3(-0.1 , yCube, zCube)
+    
+    whiteboardWritablePart?.addChildNode(cube)
+  }
+  
+  private func createCubeNode() -> SCNNode {
+      // create the basic geometry of the box (sizes are in meters)
+    // (1 / whiteboardObject!.scale.x) -> scaling value equal to 1m
+    let whiteboardScale = (1 / whiteboardObject!.scale.x)
+    let cm2 = CGFloat(whiteboardScale / 50)
+    let radLong : CGFloat =  0.02// 2 cm
+    let boxGeometry = SCNSphere(radius: radLong)
+    
+      // give the box a material to make a little more realistic
+    let material = SCNMaterial()
+    material.diffuse.contents = UIColor.blue
+    material.specular.contents = UIColor(white: 0.6, alpha: 1.0)
+    
+      // create the node and give it the materials
+    let boxNode = SCNNode(geometry: boxGeometry)
+    boxNode.geometry?.materials = [material]
+    
+    return boxNode
   }
   
   private func isFingerTipPositionNotSet(_ tip: CGPoint) -> Bool {
@@ -637,11 +708,12 @@ extension ViewController : GestureRecognitionDelegate {
   
   func removeUpperLayer() {
     var layerCase = LayerPresenterCase.other
-    let externalLayerTransparency = currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency
-    if externalLayerTransparency == 1 {
+    let focusedObject = currentObjects[self.indexFocusedObject]
+    let externalLayerTransparency = focusedObject.geometry?.firstMaterial?.transparency
+    if focusedObject.isExternalLayer && externalLayerTransparency == 1  {
       disableGestureRecognition(for: 3)
       expandLayersAnimation()
-      self.currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency = 0
+      focusedObject.geometry?.firstMaterial?.transparency = 0
     } else {
       let nextLayerForRemove = layers.first(where: { node in
         if layers.last! == node {
@@ -662,17 +734,18 @@ extension ViewController : GestureRecognitionDelegate {
   
   func revertRemovedLayer() {
     var layerCase = LayerPresenterCase.other
-    let externalLayerTransparency = currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency
+    let focusedObject = currentObjects[self.indexFocusedObject]
+    let externalLayerTransparency = focusedObject.geometry?.firstMaterial?.transparency
     let nextLayerForRemove = layers.reversed().first { node in
       return node.isHidden
     }
     if let nextLayerForRemove = nextLayerForRemove {
       nextLayerForRemove.isHidden = false
-    }else if externalLayerTransparency == 0{
+    }else if focusedObject.isExternalLayer && externalLayerTransparency == 0{
       disableGestureRecognition(for: 3)
       unionLayersAnimation()
       DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-        self.currentObjects[self.indexFocusedObject].geometry?.firstMaterial?.transparency = 1
+        focusedObject.geometry?.firstMaterial?.transparency = 1
       }
       layerCase = .first
     }

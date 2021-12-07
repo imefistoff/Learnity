@@ -32,16 +32,39 @@ extension SCNNode {
     }
   }
   
+  var isExternalLayer : Bool {
+    return !(self.name != nil && self.name!.contains("notexternal"))
+  }
+  
+  var isBasePivot : Bool {
+    return self.name != nil && self.name!.contains("basePivot")
+  }
+  
+  var isPermanent : Bool {
+    return self.name != nil && self.name!.contains("permanent")
+  }
+  
   func centerPivot() {
     var min = SCNVector3Zero
     var max = SCNVector3Zero
     self.__getBoundingBoxMin(&min, max: &max)
-    print("Min -> \(min.x) and max \(max.x)")
     self.pivot = SCNMatrix4MakeTranslation(
       min.x + (max.x - min.x)/2,
-      min.y + (max.y - min.y)/2,
+      (isBasePivot ? -1 : +1) * min.y + (max.y - min.y)/2,
       min.z + (max.z - min.z)/2
     )
+  }
+  
+  func centerPivotOnTopLeftCorner() {
+    var min = SCNVector3Zero
+    var max = SCNVector3Zero
+    self.__getBoundingBoxMin(&min, max: &max)
+    self.pivot = SCNMatrix4MakeTranslation(
+      0,
+      2.3,
+      3.5
+    )
+    print(pivot)
   }
 }
 
