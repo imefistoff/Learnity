@@ -19,6 +19,23 @@ class ControlManager {
     }
   }
   
+  var lastThreeGestures = [GestureType]() {
+    didSet{
+      if lastThreeGestures.count == 2 {
+        if lastThreeGestures[0] != lastThreeGestures[1]{
+          lastThreeGestures.removeFirst()
+        }
+      }
+      if lastThreeGestures.count == 3 {
+        if lastThreeGestures[0] == lastThreeGestures[1] && lastThreeGestures[1] == lastThreeGestures[2] {
+          gestureType = lastThreeGestures[2]
+        }
+        lastThreeGestures.removeFirst(2)
+      }
+      print(lastThreeGestures)
+    }
+  }
+  
   var gestureType: GestureType = .nothing {
     didSet{
       print(gestureType.rawValue)
@@ -29,7 +46,7 @@ class ControlManager {
   //MARK: Functions
   func setGestureType(_ type: String){
     let enumGestureType = GestureType(rawValue: type) ?? .nothing
-    self.gestureType = enumGestureType
+    lastThreeGestures.append(enumGestureType)
   }
   
   private func handleDetectedGesture(){

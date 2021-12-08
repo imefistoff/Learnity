@@ -14,8 +14,11 @@
 		AE00737C27272EBE00CC11C2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737A27272EBE00CC11C2 /* Main.storyboard */; };
 		AE00737E27272EBF00CC11C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE00737D27272EBF00CC11C2 /* Assets.xcassets */; };
 		AE00738127272EBF00CC11C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE00737F27272EBF00CC11C2 /* LaunchScreen.storyboard */; };
+		AE105CB727609619000CF521 /* FullModelTest.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = AE105CB627609619000CF521 /* FullModelTest.mlpackage */; };
 		AEA6B125274287700002FC20 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B124274287700002FC20 /* Extensions.swift */; };
 		AEA6B127274287B20002FC20 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA6B126274287B20002FC20 /* Enums.swift */; };
+		AEBD26692760A31800019465 /* MyHandPoseClassifier9.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AEBD26682760A31800019465 /* MyHandPoseClassifier9.mlmodel */; };
+		AECA21F227608F1D00A5FC97 /* TestingModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = AECA21F127608F1D00A5FC97 /* TestingModel.mlmodel */; };
 		AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECC15ED274CD8B900B23895 /* ControlManager.swift */; };
 		AEEE3E48275E1D4400C85020 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEEE3E46275E1D4400C85020 /* Assets.xcassets */; };
 		E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B20532752A51800D6B53E /* GestureInfoCell.swift */; };
@@ -23,7 +26,6 @@
 		E32B205827554AAF00D6B53E /* GestureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32B205727554AAF00D6B53E /* GestureData.swift */; };
 		E3384AB02757C6D000B3EF3B /* SnapDetector.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */; };
 		E3384AB22757C76F00B3EF3B /* SoundResultsObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */; };
-		E3384AB42757E62F00B3EF3B /* FullModelTest.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,8 +37,11 @@
 		AE00737B27272EBE00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AE00737D27272EBF00CC11C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE00738027272EBF00CC11C2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		AE105CB627609619000CF521 /* FullModelTest.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = FullModelTest.mlpackage; sourceTree = "<group>"; };
 		AEA6B124274287700002FC20 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		AEA6B126274287B20002FC20 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		AEBD26682760A31800019465 /* MyHandPoseClassifier9.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MyHandPoseClassifier9.mlmodel; sourceTree = "<group>"; };
+		AECA21F127608F1D00A5FC97 /* TestingModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = TestingModel.mlmodel; sourceTree = "<group>"; };
 		AECC15ED274CD8B900B23895 /* ControlManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlManager.swift; sourceTree = "<group>"; };
 		AEEE3E46275E1D4400C85020 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5B74856FEEBBCB8DBB71FF6 /* Pods_Learnity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Learnity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,7 +51,6 @@
 		E32B205727554AAF00D6B53E /* GestureData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureData.swift; sourceTree = "<group>"; };
 		E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SnapDetector.mlmodel; sourceTree = "<group>"; };
 		E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundResultsObserver.swift; sourceTree = "<group>"; };
-		E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FullModelTest.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,8 +107,10 @@
 		AED0588127450BDE00AB4D9E /* ML */ = {
 			isa = PBXGroup;
 			children = (
-				E3384AB32757E62F00B3EF3B /* FullModelTest.mlmodel */,
+				AEBD26682760A31800019465 /* MyHandPoseClassifier9.mlmodel */,
+				AECA21F127608F1D00A5FC97 /* TestingModel.mlmodel */,
 				E3384AAF2757C6D000B3EF3B /* SnapDetector.mlmodel */,
+				AE105CB627609619000CF521 /* FullModelTest.mlpackage */,
 				E3384AB12757C76F00B3EF3B /* SoundResultsObserver.swift */,
 			);
 			path = ML;
@@ -227,13 +233,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3384AB22757C76F00B3EF3B /* SoundResultsObserver.swift in Sources */,
-				E3384AB42757E62F00B3EF3B /* FullModelTest.mlmodel in Sources */,
 				AE00737927272EBE00CC11C2 /* ViewController.swift in Sources */,
 				AEA6B125274287700002FC20 /* Extensions.swift in Sources */,
+				AEBD26692760A31800019465 /* MyHandPoseClassifier9.mlmodel in Sources */,
 				AEA6B127274287B20002FC20 /* Enums.swift in Sources */,
 				E32B20542752A51800D6B53E /* GestureInfoCell.swift in Sources */,
+				AECA21F227608F1D00A5FC97 /* TestingModel.mlmodel in Sources */,
 				AE00737527272EBE00CC11C2 /* AppDelegate.swift in Sources */,
 				E32B205627554A8300D6B53E /* GesturesPresenter.swift in Sources */,
+				AE105CB727609619000CF521 /* FullModelTest.mlpackage in Sources */,
 				AECC15EE274CD8B900B23895 /* ControlManager.swift in Sources */,
 				E3384AB02757C6D000B3EF3B /* SnapDetector.mlmodel in Sources */,
 				E32B205827554AAF00D6B53E /* GestureData.swift in Sources */,

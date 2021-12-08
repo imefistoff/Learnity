@@ -72,9 +72,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
   
     //MARK: Gesture prediction variables
-  var gestureModel : FullModelTest!
+  var gestureModel : TestingModel!
   let predictEvery = 3
   var frameCounter = -1
+  var predictConfidence = 0.65
   
   //MARK: Sound prediction variables
   var soundModel : SnapDetector!
@@ -140,7 +141,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     setupSoundPrediciton()
     
     do {
-      gestureModel = try FullModelTest(configuration: MLModelConfiguration())
+      gestureModel = try TestingModel(configuration: MLModelConfiguration())
     } catch {
       fatalError("Cannot get CoreML model for gesture. Investigate please.")
     }
@@ -530,7 +531,7 @@ extension ViewController: ARSessionDelegate{
         let handPosePrediction = try gestureModel.prediction(poses: keypointsMultiArray)
         let confidence = handPosePrediction.labelProbabilities[handPosePrediction.label]!
         print("\(handPosePrediction.label) with \(confidence)")
-        if isWaitingForGesture && confidence > 0.55 {
+        if isWaitingForGesture && confidence > predictConfidence {
           gestureManager.setGestureType(handPosePrediction.label)
         } else {
             // TODO: check if we actually need this state update
